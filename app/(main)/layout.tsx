@@ -1,15 +1,14 @@
-import {redirect} from "next/navigation"
+import BottomBar from "../components/BottomBar";
 
-
-export default async function LayoutLogg({
-    children,
+export default function MainLayout({
+  children,
 }: {
-    children: React.ReactNode;
-}) { 
-    const session = ''
-
-    // if (!session.user) redirect('/login');
-    // crear esto dpe 
-
-    return <>{children}</>
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex min-h-screen flex-col">
+      <div className="mx-auto max-w-7xl p-5">{children}</div>
+      <BottomBar />
+    </div>
+  );
 }

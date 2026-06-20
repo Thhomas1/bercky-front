@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import { Geist, Geist_Mono, Noto_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { cn } from "./lib/utils";
-import BottomBar from "./BottomBar";
 
 const paquito = localFont({
   src: [
@@ -58,20 +57,15 @@ export default function RootLayout({
         "dark",
         "h-full",
         "antialiased",
+        paquito.variable,
         geistSans.variable,
         geistMono.variable,
         "font-sans",
         notoSans.variable,
         playfairDisplayHeading.variable,
-        paquito.variable
       )}
     >
-      <body className="min-h-full flex flex-col">
-        <div className="flex min-h-screen flex-col">
-          <div className="mx-auto max-w-7xl p-5">{children}</div>
-          <BottomBar />
-        </div>
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }
