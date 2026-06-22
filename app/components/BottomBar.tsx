@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Home, FileText, User } from "lucide-react";
 
-export default function BottomBar() {
+export const Bottombar = () => {
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 flex justify-center pb-6">
       <nav
@@ -59,3 +59,5 @@ export default function BottomBar() {
     </div>
   );
 }
+
+export default Bottombar;

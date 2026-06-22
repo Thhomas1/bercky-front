@@ -1,4 +1,5 @@
-import BottomBar from "../components/BottomBar";
+import Navbar from "@/components/Navbar";
+import BottomBar from "@/components/Bottombar"
 
 export default function MainLayout({
   children,
@@ -6,8 +7,9 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="mx-auto max-w-7xl p-5">{children}</div>
+    <div>
+      <Navbar />
+      {children}
       <BottomBar />
     </div>
   );
