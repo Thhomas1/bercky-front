@@ -3,8 +3,6 @@
 import ReportCard, { mockReports } from "@/components/ReportCard";
 import Titles from "@/components/Titles";
 
-
-
 export default function Home() {
   return (
     <main className="px-4 py-6 pb-28 sm:px-6">
