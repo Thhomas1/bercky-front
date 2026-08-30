@@ -1,5 +1,5 @@
+import { Bottombar } from "@/components/BottomBar";
 import Navbar from "@/components/Navbar";
-import BottomBar from "@/components/Bottombar"
 
 export default function MainLayout({
   children,
@@ -10,7 +10,7 @@ export default function MainLayout({
     <div>
       <Navbar />
       {children}
-      <BottomBar />
+      <Bottombar />
     </div>
   );
 }
