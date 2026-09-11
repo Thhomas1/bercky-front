@@ -46,7 +46,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-zinc-900 bg-black/40 py-6 text-center text-xs text-zinc-600 px-6 flex flex-col sm:flex-row sm:justify-between max-w-6xl mx-auto gap-2">
-        <p>© 2026 Bercky. Todos los derechos reservados.</p>
+        <p>© 2026 Bercky. Open Source ahora y siempre.</p>
         <p>
           Diseñado con <span className="text-red-500">❤️</span> para los animalitos por{" "}
           <span className="text-zinc-400 font-medium">Bercky</span>
