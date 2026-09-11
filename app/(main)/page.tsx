@@ -4,6 +4,8 @@ import ReportCard from "@/components/ReportCard";
 import Titles from "@/components/Titles";
 import { Report } from "@/types/report";
 import { useGetReports } from "@/hooks/useGetReports";
+import { Shelters } from "@/components/Shelters";
+import FAQ from "@/components/FAQ";
 
 export default function Home() {
   const { data: reports, isLoading, isError } = useGetReports();
@@ -18,6 +20,12 @@ export default function Home() {
         {reports?.map((report: Report) => (
           <ReportCard key={report.id} report={report} />
         ))}
+      </div>
+      <div >
+        <Shelters />
+      </div>
+      <div >
+        <FAQ />
       </div>
     </main>
   );
