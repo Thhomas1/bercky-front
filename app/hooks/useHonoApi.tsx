@@ -8,8 +8,6 @@ export function useHonoApi() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
-   console.log("Mi ANON KEY es:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-
   const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
     const { data: { session } } = await supabase.auth.getSession()
 

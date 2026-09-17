@@ -3,12 +3,11 @@
 import Image from "next/image";
 import { MapPin, Clock, MessageCircle } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { mockReportDetail, mockComments } from "@/lib/mocks";
-import type { AnimalStatus } from "@/types/report";
 import type { Comment } from "@/types/comment";
 import Map from "@/components/Map";
+import { useGetReport } from "@/hooks/useGetReport";
 
-const statusStyles: Record<AnimalStatus, string> = {
+const statusStyles: Record<string, string> = {
   perdido: "bg-red-500/10 text-red-600 dark:text-red-400",
   encontrado: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
   "en transito": "bg-amber-500/10 text-amber-600 dark:text-amber-400",
@@ -18,28 +17,18 @@ function CommentRow({ comment }: { comment: Comment }) {
   return (
     <div className="flex gap-3">
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground">
-        {comment.author.name.charAt(0).toUpperCase()}
+        {comment.user_id}
       </div>
-
       <div className="flex-1">
         <div className="flex items-baseline gap-2">
-          <span className="text-sm font-semibold text-foreground">
-            {comment.author.name}
-          </span>
           <span className="text-xs text-muted-foreground">
-            {comment.timeAgo}
+            {new Date(comment.createdat).toLocaleDateString("es-AR")}
           </span>
         </div>
         <p className="mt-0.5 text-sm text-foreground/90">{comment.content}</p>
-
-        {comment.lat !== null && comment.lng !== null && (
-          <div className="mt-2 max-w-xs">
-            <Map
-              lat={comment.lat}
-              lng={comment.lng}
-              label={`Avistamiento de ${comment.author.name}`}
-              height="h-32"
-            />
+        {comment.photo && (
+          <div className="relative mt-2 h-32 w-32 overflow-hidden rounded-lg">
+            <Image src={comment.photo} alt="foto del comentario" fill className="object-cover" />
           </div>
         )}
       </div>
@@ -47,16 +36,20 @@ function CommentRow({ comment }: { comment: Comment }) {
   );
 }
 
-export const ReportPreview = () => {
-  const report = mockReportDetail;
+export const ReportPreview = ({ id }: { id: number }) => {
+  const { data: report, isLoading, isError } = useGetReport(1);
+  console.log("data", report, "id", id)
+
+  if (isLoading) return <p className="p-10 text-muted-foreground">Cargando...</p>;
+  if (isError || !report) return <p className="p-10 text-red-400">Error al cargar el reporte.</p>;
 
   return (
     <main className="mx-auto max-w-2xl px-0 py-0 pb-28 sm:px-6 sm:py-8">
       <div className="aspect-square w-full bg-muted sm:aspect-4/3 sm:overflow-hidden sm:rounded-2xl">
-        {report.imageUrl ? (
+        {report.photo ? (
           <Image
-            src={report.imageUrl}
-            alt={report.animalName}
+            src={report.photo}
+            alt={report.animal.name}
             fill
             priority
             className="object-cover"
@@ -72,21 +65,19 @@ export const ReportPreview = () => {
         <div className="flex items-start justify-between gap-3 pt-4">
           <div>
             <h1 className="font-display text-2xl text-foreground sm:text-3xl">
-              {report.animalName}
+              {report.animal.name}
             </h1>
             <div className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4" strokeWidth={1.75} />
-              <span>{report.zone}</span>
+              <span>{report.zonereport}</span>
               <span className="text-muted-foreground/50">·</span>
               <Clock className="h-4 w-4" strokeWidth={1.75} />
-              <span>{report.timeAgo}</span>
+              <span>{new Date(report.createdat).toLocaleDateString("es-AR")}</span>
             </div>
           </div>
 
-          <span
-            className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium capitalize ${statusStyles[report.status]}`}
-          >
-            {report.status}
+          <span className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium capitalize ${statusStyles[report.animal.status]}`}>
+            {report.animal.status}
           </span>
         </div>
 
@@ -94,17 +85,15 @@ export const ReportPreview = () => {
           {report.description}
         </p>
 
-        {/* Mapa de última ubicación vista */}
         <div className="mt-5">
           <h2 className="mb-2 text-sm font-semibold text-muted-foreground">
             Última ubicación reportada
           </h2>
-          <Map lat={report.lat} lng={report.lng} label={report.animalName} />
+          <Map lat={0} lng={0} label={report.animal.name} />
         </div>
 
         <Separator className="my-6" />
 
-        {/* Comentarios / avistamientos */}
         <div>
           <div className="mb-4 flex items-center gap-2">
             <MessageCircle className="h-5 w-5 text-muted-foreground" strokeWidth={1.75} />
@@ -112,12 +101,7 @@ export const ReportPreview = () => {
               Avistamientos y comentarios
             </h2>
           </div>
-
-          <div className="flex flex-col gap-5">
-            {mockComments.map((comment) => (
-              <CommentRow key={comment.id} comment={comment} />
-            ))}
-          </div>
+          <p className="text-sm text-muted-foreground">Próximamente.</p>
         </div>
       </div>
     </main>

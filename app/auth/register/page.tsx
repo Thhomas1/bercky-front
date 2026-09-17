@@ -27,8 +27,6 @@ const registerSchema = z.object({
 type RegisterValues = z.infer<typeof registerSchema>;
 //@TODO export this from types
 
-
-
 export const Register = () => {
   const router = useRouter();
   
@@ -71,7 +69,6 @@ export const Register = () => {
 
   return (
     <div className="flex min-h-screen w-full">
-      {/* Columna izquierda: formulario */}
       <div className="flex w-full items-center justify-center px-6 py-12 sm:px-10 md:w-1/2 md:px-12 lg:px-16">
         <div className="w-full max-w-md">
           <h1 className="font-display text-3xl text-foreground">Bercky</h1>
@@ -177,7 +174,7 @@ export const Register = () => {
           <p className="mt-6 text-center text-sm text-muted-foreground">
             ¿Ya tenés cuenta?{" "}
             <Link
-              href="/login"
+              href="/auth/login"
               className="font-medium text-foreground underline-offset-4 hover:underline"
             >
               Iniciá sesión

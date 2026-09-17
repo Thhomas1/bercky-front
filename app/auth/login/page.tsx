@@ -153,7 +153,7 @@ export const Login = () => {
           <p className="mt-6 text-center text-sm text-muted-foreground">
             ¿No tenés cuenta?{" "}
             <Link
-              href="/register"
+              href="/auth/register"
               className="font-medium text-foreground underline-offset-4 hover:underline"
             >
               Registrate

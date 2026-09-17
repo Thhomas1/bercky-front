@@ -17,10 +17,10 @@ function UserReportRow({ report }: { report: Report }) {
   return (
     <div className="overflow-hidden rounded-xl border border-black/5 bg-card dark:border-white/5">
       <div className="aspect-video w-full bg-muted">
-        {report.imageUrl ? (
+        {report.photo ? (
           <Image
-            src={report.imageUrl}
-            alt={report.animalName}
+            src={report.photo}
+            alt={""}
             fill
             className="object-cover"
           />
@@ -34,23 +34,23 @@ function UserReportRow({ report }: { report: Report }) {
       <div className="flex flex-col gap-2 p-4">
         <div className="flex items-center justify-between gap-2">
           <h4 className="font-semibold text-foreground">
-            {report.animalName}
+            {report.description}
           </h4>
           <span
             className={`rounded-full px-2.5 py-1 text-xs font-medium capitalize ${statusStyles[report.status]}`}
           >
-            {report.status}
+            {report.istransit}
           </span>
         </div>
 
         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <MapPin className="h-3.5 w-3.5" strokeWidth={1.75} />
-          <span>{report.zone}</span>
+          <span>{report.spotted}</span>
         </div>
 
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Clock className="h-3.5 w-3.5" strokeWidth={1.75} />
-          <span>{report.timeAgo}</span>
+          <span>{report.createdat}</span>
         </div>
       </div>
     </div>

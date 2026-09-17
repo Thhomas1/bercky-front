@@ -14,12 +14,29 @@ export interface Report {
 
 export interface ReportDetail {
   id: number;
-  animalName: string;
-  status: AnimalStatus;
-  zone: string;
-  timeAgo: string;
-  imageUrl: string | null;
+  zonereport: string;
+  spotted: string;
+  istransit: boolean;
   description: string;
-  lat: number;
-  lng: number;
+  photo: string | null;
+  createdat: string;
+  user: {
+    id: number;
+    name: string;
+    lastname: string;
+    phonenumber: string;
+    zone: string;
+    photo: string | null;
+    mail: string;
+    role_id: number;
+  };
+  animal: {
+    id: number;
+    name: string;
+    breed: string;
+    size: string;
+    status: string;
+    type: string;
+    age: number;
+  };
 }
