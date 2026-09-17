@@ -14,87 +14,78 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import GoogleIcon from "../../../public/icons/googleIcon";
+import { createBrowserClient } from "@supabase/ssr";
+import { useRouter } from "next/navigation";
 
-const registerSchema = z.object({
-  name: z.string().min(2, "Ingresá tu nombre completo"),
+const loginSchema = z.object({
   email: z.string().email("Ingresá un email válido"),
-  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+  password: z.string().min(1, "Ingresá tu contraseña"),
 });
 
-type RegisterValues = z.infer<typeof registerSchema>;
-// export this from types
+type LoginValues = z.infer<typeof loginSchema>;
 
-export const Register = () => {
-  const form = useForm<RegisterValues>({
-    resolver: zodResolver(registerSchema),
+
+export const Login = () => {
+  
+  const router = useRouter();
+  const supabase = createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+  //@TODO migrate when we finish the SSN
+
+  console.log("URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
+  console.log("ANON KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
+  const form = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
-      name: "",
       email: "",
       password: "",
     },
   });
+  
+  async function onSubmit(values: LoginValues) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+    email: values.email,
+    password: values.password,
+  });
 
-  function onSubmit(values: RegisterValues) {
-    // Acá va el fetch a tu backend Hono, ej:
-    // await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
-    //   method: "POST",
-    //   credentials: "include",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(values),
-    // });
-    console.log(values);
+  if (error) {
+    console.error("Error de login:", error.message);
+    return;
+  }
+    router.push('/');
   }
 
-  function handleGoogleSignup() {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
-  }
+  async function handleGoogleLogin() {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=/report` }
+    })
+  } 
 
   return (
     <div className="flex min-h-screen w-full">
-      {/* Columna izquierda: formulario */}
       <div className="flex w-full items-center justify-center px-6 py-12 sm:px-10 md:w-1/2 md:px-12 lg:px-16">
         <div className="w-full max-w-md">
           <h1 className="font-display text-3xl text-foreground">Bercky</h1>
           <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            Creá tu cuenta y empezá a ayudar a reunir familias con sus mascotas.
+            Iniciá sesión para ver los reportes en nuestro pueblo
           </p>
 
           <form
-            id="register-form"
+            id="login-form"
             onSubmit={form.handleSubmit(onSubmit)}
             className="mt-8"
           >
             <FieldGroup>
               <Controller
-                name="name"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="register-name">Nombre</FieldLabel>
-                    <Input
-                      {...field}
-                      id="register-name"
-                      type="text"
-                      autoComplete="name"
-                      placeholder="Tu nombre"
-                      aria-invalid={fieldState.invalid}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-
-              <Controller
                 name="email"
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="register-email">Email</FieldLabel>
+                    <FieldLabel htmlFor="login-email">Email</FieldLabel>
                     <Input
                       {...field}
-                      id="register-email"
+                      id="login-email"
                       type="email"
                       autoComplete="email"
                       placeholder="tu@email.com"
@@ -112,14 +103,14 @@ export const Register = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="register-password">
+                    <FieldLabel htmlFor="login-password">
                       Contraseña
                     </FieldLabel>
                     <Input
                       {...field}
-                      id="register-password"
+                      id="login-password"
                       type="password"
-                      autoComplete="new-password"
+                      autoComplete="current-password"
                       placeholder="••••••••"
                       aria-invalid={fieldState.invalid}
                     />
@@ -134,14 +125,18 @@ export const Register = () => {
 
           <Button
             type="submit"
-            form="register-form"
+            form="login-form"
             className="mt-4 w-full"
             disabled={form.formState.isSubmitting}
           >
-            {form.formState.isSubmitting ? "Creando cuenta..." : "Crear cuenta"}
+            {form.formState.isSubmitting ? "Entrando..." : "Entrar"}
           </Button>
+
           <div className="my-5 flex items-center gap-3">
             <span className="h-px flex-1 bg-border" />
+            <span className="text-xs uppercase text-muted-foreground">
+              o registrate + rapido
+            </span>
             <span className="h-px flex-1 bg-border" />
           </div>
 
@@ -149,22 +144,24 @@ export const Register = () => {
             type="button"
             variant="outline"
             className="w-full gap-2"
-            onClick={handleGoogleSignup}
+            onClick={handleGoogleLogin}
           >
             <GoogleIcon />
-            Registrate con Google
+            Inicia con Google
           </Button>
+
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            ¿Ya tenés cuenta?{" "}
+            ¿No tenés cuenta?{" "}
             <Link
-              href="/login"
+              href="/register"
               className="font-medium text-foreground underline-offset-4 hover:underline"
             >
-              Iniciá sesión
+              Registrate
             </Link>
           </p>
         </div>
       </div>
+                {/* luego poner un random para poner varios animales en la portada */}
       <div className="relative hidden w-1/2 md:block">
         <Image
           src="/images/login.jpg"
@@ -180,4 +177,4 @@ export const Register = () => {
   );
 };
 
-export default Register;
+export default Login;

@@ -14,66 +14,107 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import GoogleIcon from "../../../public/icons/googleIcon";
+import { createBrowserClient } from "@supabase/ssr";
+import { useRouter } from "next/navigation";
 
-const loginSchema = z.object({
+
+const registerSchema = z.object({
+  name: z.string().min(2, "Ingresá tu nombre completo"),
   email: z.string().email("Ingresá un email válido"),
-  password: z.string().min(1, "Ingresá tu contraseña"),
+  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
 });
 
-type LoginValues = z.infer<typeof loginSchema>;
+type RegisterValues = z.infer<typeof registerSchema>;
+//@TODO export this from types
 
 
-export const Login = () => {
-  const form = useForm<LoginValues>({
-    resolver: zodResolver(loginSchema),
+
+export const Register = () => {
+  const router = useRouter();
+  
+  const supabase = createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+  //@TODO migrate when we finish the SSN
+  
+  const form = useForm<RegisterValues>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
   });
 
-  function onSubmit(values: LoginValues) {
-    //  fetch Hono
-    // await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-    //   method: "POST",
-    //   credentials: "include",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(values),
-    // });
-    console.log(values);
+  async function onSubmit(values: RegisterValues) {
+    const { data, error } = await supabase.auth.signUp({
+    email: values.email,
+    password: values.password,
+    options: {
+      data: {
+        full_name: values.name, // supabase aca sabe cómo se llama y se lo pasa al Trigger
+      }
+    }
+  });
+
+  if (error) {
+    console.error("Error al registrar:", error.message);
+    return;
+  }
+    router.push('/');
   }
 
-  function handleGoogleLogin() {
-    // Redirige al endpoint de OAuth de tu backend Hono.
-    // Ese endpoint hace el flujo con Google y al final
-    // setea la cookie httpOnly + redirige de vuelta al front.
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
+  async function handleGoogleSignup() {
+    await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: `${window.location.origin}/auth/callback?next=/report` }
+  })
   }
 
   return (
     <div className="flex min-h-screen w-full">
+      {/* Columna izquierda: formulario */}
       <div className="flex w-full items-center justify-center px-6 py-12 sm:px-10 md:w-1/2 md:px-12 lg:px-16">
         <div className="w-full max-w-md">
           <h1 className="font-display text-3xl text-foreground">Bercky</h1>
           <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            Iniciá sesión para ver los reportes en nuestro pueblo
+            Creá tu cuenta y empezá a ayudar a reunir familias con sus mascotas.
           </p>
 
           <form
-            id="login-form"
+            id="register-form"
             onSubmit={form.handleSubmit(onSubmit)}
             className="mt-8"
           >
             <FieldGroup>
               <Controller
+                name="name"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="register-name">Nombre</FieldLabel>
+                    <Input
+                      {...field}
+                      id="register-name"
+                      type="text"
+                      autoComplete="name"
+                      placeholder="Tu nombre"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+
+              <Controller
                 name="email"
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="login-email">Email</FieldLabel>
+                    <FieldLabel htmlFor="register-email">Email</FieldLabel>
                     <Input
                       {...field}
-                      id="login-email"
+                      id="register-email"
                       type="email"
                       autoComplete="email"
                       placeholder="tu@email.com"
@@ -91,14 +132,14 @@ export const Login = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="login-password">
+                    <FieldLabel htmlFor="register-password">
                       Contraseña
                     </FieldLabel>
                     <Input
                       {...field}
-                      id="login-password"
+                      id="register-password"
                       type="password"
-                      autoComplete="current-password"
+                      autoComplete="new-password"
                       placeholder="••••••••"
                       aria-invalid={fieldState.invalid}
                     />
@@ -113,18 +154,14 @@ export const Login = () => {
 
           <Button
             type="submit"
-            form="login-form"
+            form="register-form"
             className="mt-4 w-full"
             disabled={form.formState.isSubmitting}
           >
-            {form.formState.isSubmitting ? "Entrando..." : "Entrar"}
+            {form.formState.isSubmitting ? "Creando cuenta..." : "Crear cuenta"}
           </Button>
-
           <div className="my-5 flex items-center gap-3">
             <span className="h-px flex-1 bg-border" />
-            <span className="text-xs uppercase text-muted-foreground">
-              o registrate + rapido
-            </span>
             <span className="h-px flex-1 bg-border" />
           </div>
 
@@ -132,24 +169,22 @@ export const Login = () => {
             type="button"
             variant="outline"
             className="w-full gap-2"
-            onClick={handleGoogleLogin}
+            onClick={handleGoogleSignup}
           >
             <GoogleIcon />
-            Inicia con Google
+            Registrate con Google
           </Button>
-
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            ¿No tenés cuenta?{" "}
+            ¿Ya tenés cuenta?{" "}
             <Link
-              href="/register"
+              href="/login"
               className="font-medium text-foreground underline-offset-4 hover:underline"
             >
-              Registrate
+              Iniciá sesión
             </Link>
           </p>
         </div>
       </div>
-                {/* luego poner un random para poner varios animales en la portada */}
       <div className="relative hidden w-1/2 md:block">
         <Image
           src="/images/login.jpg"
@@ -165,4 +200,4 @@ export const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

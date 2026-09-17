@@ -1,13 +1,16 @@
-export interface User {
+export interface Role {
   id: number;
   name: string;
-  email: string;
-  created_at: Date;
 }
 
-export interface UserWithToken {
-  user: User;
-  token: string;
+export interface User {
+  id: number;
+  supabase_id?: string; 
+  name: string;
+  email: string;
+  role_id: number; 
+  role?: Role; 
+  created_at: Date;
 }
 
 export interface RegisterDto {
