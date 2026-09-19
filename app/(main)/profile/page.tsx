@@ -57,7 +57,7 @@ function UserReportRow({ report }: { report: Report }) {
   );
 }
 
-function ProfileInfo() {
+const ProfileInfo = () => {
   return (
     <div className="flex flex-col items-center text-center md:items-start md:text-left">
       <div className="relative h-32 w-32 overflow-hidden rounded-full bg-muted">
