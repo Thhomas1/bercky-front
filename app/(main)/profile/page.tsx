@@ -37,7 +37,7 @@ function UserReportRow({ report }: { report: Report }) {
             {report.description}
           </h4>
           <span
-            className={`rounded-full px-2.5 py-1 text-xs font-medium capitalize ${statusStyles[report.status]}`}
+            className={`rounded-full px-2.5 py-1 text-xs font-medium capitalize `}
           >
             {report.istransit}
           </span>
