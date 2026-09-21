@@ -1,12 +1,9 @@
 'use client'
 
-import { createBrowserClient } from '@supabase/ssr'
+import { supabase } from "@/lib/supa";
+
 
 export function useHonoApi() {
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
 
   const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
     const { data: { session } } = await supabase.auth.getSession()

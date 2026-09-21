@@ -1,6 +1,12 @@
+import ReportForm from "@/components/ReportForm";
+
+
+
 export const Report = () =>  {
     return (
-        <div className="div">Report Page</div>
+     <div className="min-h-screen bg-background pt-10">
+      <ReportForm />
+    </div>
     )
 }
 

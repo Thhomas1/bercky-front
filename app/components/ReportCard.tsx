@@ -13,8 +13,6 @@ const statusStyles: Record<AnimalStatus, string> = {
 
 export const ReportCard = ({ report }: { report: Report }) => {
   const animalName = `Mascota #${report.animal_id}`;
-  // const imageUrl = report.photo && report.photo.startsWith("http") ? report.photo : null;
-  // use the image when we use the url from instagram
   const status = report.istransit ? "en transito" : "perdido";
 
   return (

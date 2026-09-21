@@ -36,7 +36,7 @@ export const Titles = () => {
           📍 Red Comunitaria de Bernal
         </span>
         <h1 className="font-display text-4xl text-foreground sm:text-5xl md:text-6xl font-bold tracking-tight flex flex-col sm:flex-row items-center justify-center gap-x-3 gap-y-1 min-h-[7rem] sm:min-h-0">
-          <span>Buscá a tu </span>
+          <span>Buscá a tu</span>
           <span className="relative inline-block overflow-hidden h-[1.2em] w-full sm:w-[260px] md:w-[320px] text-center sm:text-left">
              <AnimatePresence mode="wait">
               <motion.span
