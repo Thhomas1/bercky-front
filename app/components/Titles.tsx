@@ -65,7 +65,7 @@ export const Titles = () => {
           className="mt-10 flex flex-wrap items-center justify-center gap-4 w-full sm:w-auto"
         >
           <Link
-            href="/report"
+            href="/report/create"
             className="group flex items-center justify-center gap-2 rounded-xl bg-blue-500 px-6 py-3 text-sm font-semibold text-zinc-950 shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:bg-emerald-400 hover:scale-102 active:scale-98 w-full sm:w-auto"
           >
             <span>📢</span>

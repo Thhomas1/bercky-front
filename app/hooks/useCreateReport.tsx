@@ -1,13 +1,17 @@
-import { supabase } from "@/lib/supa";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createBrowserClient } from "@supabase/ssr";
 
+const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export type CreateReportPayload = {
   status: "perdido" | "en transito" | "encontrado";
   zonereport: string;
   description: string;
   contact: string;
-  photoUrl?: string; 
+  photo?: FileList; 
 };
 
 export const useCreateReport = () => {
@@ -15,49 +19,52 @@ export const useCreateReport = () => {
 
   return useMutation({
     mutationFn: async (newReport: CreateReportPayload) => {
-      // 1. Obtenemos sesión
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError) console.error("Error obteniendo la sesión de Supabase:", sessionError);
-      
-
+      // Obtenemos la sesión para sacar el ID del usuario
+      const { data: { session } } = await supabase.auth.getSession();
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-      console.log("URL de la API configurada:", apiUrl);
 
-      if (!apiUrl) {
-        throw new Error("Falta definir NEXT_PUBLIC_API_URL en las variables de entorno (.env)");
+      if (!apiUrl) throw new Error("Falta definir NEXT_PUBLIC_API_URL");
+
+      const formData = new FormData();
+      
+      // 1. Campos base del form
+      formData.append("status", newReport.status);
+      formData.append("zonereport", newReport.zonereport);
+      formData.append("contact", newReport.contact);
+      formData.append("istransit", String(newReport.status === "en transito"));
+      formData.append("description", newReport.description || "");
+      formData.append("spotted", "false"); //@TODO use it
+
+
+      // Metemos el ID del usuario que está logueado
+      // if (session?.user?.id) {
+      //   formData.append("user_id", session.user.id);
+      // } else {
+        //@TODO hardcodeado, cambiar
+        formData.append("user_id", "1"); 
+      // }
+
+      // IMPORTANTE: Como el form del reporte por ahora no crea un animal, 
+      // le paso el ID "1" (como probaste en Postman) para que no rompa la BD. 
+      // Luego podés ajustar esta lógica.
+      //@TODO hardcodeado, cambiar
+      formData.append("animal_id", "1"); 
+      if (newReport.photo && newReport.photo.length > 0) {
+        formData.append("imageFile", newReport.photo[0]);
       }
 
-      const payload = {
-        status: newReport.status,
-        zonereport: newReport.zonereport || "",
-        contact: newReport.contact || "",
-        istransit: newReport.status === "en transito",
-        description: newReport.description || "",
-        photo: newReport.photoUrl || null,
-      };
-
-      console.log("URL final del fetch:", `${apiUrl}/reports`);
-      console.log("Payload limpio a enviar:", payload);
-      console.log("Token presente:", !!session?.access_token);
-
-      // 2. Ejecutamos el fetch
       const res = await fetch(`${apiUrl}/reports`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          // el FormData se encarga
           ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
         },
-        body: JSON.stringify(payload),
+        body: formData,
       });
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => null); 
-        console.error("Detalle del error del backend:", errorData);
-        
-        throw new Error(
-          errorData?.error || errorData?.message || `Error del servidor: Status ${res.status}`
-        );
+        throw new Error(errorData?.error || errorData?.message || `Error del servidor: Status ${res.status}`);
       }
 
       return res.json();
