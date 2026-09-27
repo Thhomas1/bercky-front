@@ -2,9 +2,25 @@
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { motion } from "motion/react";
-import { MapPin, Camera, Info, Phone, Send } from "lucide-react";
+import { 
+  MapPin, Camera, Info, Phone, Send, 
+  PawPrint, Tag, Ruler, Calendar, Map 
+} from "lucide-react";
 import { useRouter } from "next/navigation";
-import { CreateReportPayload, useCreateReport } from "@/hooks/useCreateReport";
+import { useCreateReport } from "@/hooks/useCreateReport"; // Tu hook ahora debe recibir FormData
+
+type ReportFormValues = {
+  status: "perdido" | "encontrado" | "en transito";
+  zonereport: string;
+  spotted: string;
+  description: string;
+  animal_name: string;
+  animal_type: "perro" | "gato" | "otro";
+  animal_breed: string;
+  animal_size: "peque" | "mediano" | "grande";
+  animal_age: number;
+  photo: FileList;
+};
 
 export default function ReportForm() {
   const router = useRouter();
@@ -14,18 +30,44 @@ export default function ReportForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateReportPayload>({
+  } = useForm<ReportFormValues>({
     defaultValues: {
       status: "perdido",
+      animal_type: "perro",
+      animal_size: "mediano",
     },
   });
 
-  const onSubmit: SubmitHandler<CreateReportPayload> = async (data) => {
+  const onSubmit: SubmitHandler<ReportFormValues> = async (data) => {
     try {
-      await createReportMutation.mutateAsync(data);
+      const formData = new FormData();
+      
+      // reporte
+      formData.append("status", data.status);
+      formData.append("istransit", String(data.status === "en transito"));
+      formData.append("zonereport", data.zonereport);
+      formData.append("spotted", data.spotted);
+      formData.append("description", data.description);
+
+      // animal
+      formData.append("animal_name", data.animal_name || "desconocido");
+      formData.append("animal_type", data.animal_type); 
+      formData.append("animal_breed", data.animal_breed || "desconocida");
+      formData.append("animal_size", data.animal_size);
+      formData.append("animal_age", String(data.animal_age || 1));
+      
+      //@hardcodeado revisar luego del auth 
+      formData.append("user_id", "1");
+
+      if (data.photo && data.photo.length > 0) {
+        formData.append("imageFile", data.photo[0]);
+      }
+
+      await createReportMutation.mutateAsync(formData); 
+      
       router.push("/");
     } catch (error) {
-      console.error("Error al crear el reporte", error);
+      console.error("Error al publicar el reporte:", error);
     }
   };
 
@@ -51,7 +93,7 @@ export default function ReportForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-3">
             <label className="text-sm font-semibold text-foreground">
-              ¿Cuál es la situación? *
+              ¿Cuál es la situación?
             </label>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               {(["perdido", "en transito", "encontrado"] as const).map((statusOption) => (
@@ -69,56 +111,127 @@ export default function ReportForm() {
                 </label>
               ))}
             </div>
-            {errors.status && (
-              <p className="text-xs text-red-500">{errors.status.message}</p>
-            )}
           </div>
-          
-          <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <MapPin className="h-4 w-4 text-muted-foreground" />
-              Zona / Barrio *
-            </label>
-            <input
-              type="text"
-              placeholder="Ej: Centro de Bernal, cerca de la estación..."
-              className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-zinc-800"
-              {...register("zonereport", { required: "La zona es obligatoria" })}
-            />
-            {errors.zonereport && (
-              <p className="text-xs text-red-500">{errors.zonereport.message}</p>
-            )}
+
+          <hr className="border-black/5 dark:border-white/5" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <PawPrint className="h-4 w-4 text-muted-foreground" />
+                Nombre (Opcional)
+              </label>
+              <input
+                type="text"
+                placeholder="Ej: Firulais"
+                className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-zinc-800"
+                {...register("animal_name")}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <Tag className="h-4 w-4 text-muted-foreground" />
+                Tipo de animal *
+              </label>
+              <select
+                className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-zinc-800"
+                {...register("animal_type")}
+              >
+                <option value="perro">Perro</option>
+                <option value="gato">Gato</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <Info className="h-4 w-4 text-muted-foreground" />
+                Raza (Opcional)
+              </label>
+              <input
+                type="text"
+                placeholder="Ej: Caniche, Mestizo..."
+                className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-zinc-800"
+                {...register("animal_breed")}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <Ruler className="h-4 w-4 text-muted-foreground" />
+                  Tamaño *
+                </label>
+                <select
+                  className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-zinc-800"
+                  {...register("animal_size")}
+                >
+                  <option value="peque">Pequeño</option>
+                  <option value="mediano">Mediano</option>
+                  <option value="grande">Grande</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  Edad aprox.
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="Ej: 3"
+                  className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-zinc-800"
+                  {...register("animal_age")}
+                />
+              </div>
+            </div>
           </div>
-          
+
+          <hr className="border-black/5 dark:border-white/5" />
+
+          {/* ================= UBICACIÓN Y DESCRIPCIÓN ================= */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <MapPin className="h-4 w-4 text-muted-foreground" />
+                Zona / Barrio (General) *
+              </label>
+              <input
+                type="text"
+                placeholder="Ej: Centro de Bernal"
+                className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-zinc-800"
+                {...register("zonereport", { required: "La zona es obligatoria" })}
+              />
+              {errors.zonereport && <p className="text-xs text-red-500">{errors.zonereport.message}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <Map className="h-4 w-4 text-muted-foreground" />
+                Lugar exacto (Calles) *
+              </label>
+              <input
+                type="text"
+                placeholder="Ej: 9 de Julio y Belgrano"
+                className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-zinc-800"
+                {...register("spotted", { required: "El lugar exacto es obligatorio" })}
+              />
+              {errors.spotted && <p className="text-xs text-red-500">{errors.spotted.message}</p>}
+            </div>
+          </div>
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Info className="h-4 w-4 text-muted-foreground" />
-              Descripción
+              Descripción extra
             </label>
             <textarea
-              rows={4}
-              placeholder="Ej: Perrito mestizo, tamaño mediano, collar rojo. Es muy asustadizo."
+              rows={3}
+              placeholder="Ej: Tiene collar rojo. Es muy asustadizo."
               className="flex w-full resize-none rounded-xl border border-zinc-200 bg-background px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-zinc-800"
               {...register("description")}
             />
-          </div>
-          
-          <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              Contacto *
-            </label>
-            <input
-              type="text"
-              placeholder="Tu número de teléfono o red social"
-              className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-zinc-800"
-              {...register("contact", { required: "Dejá un medio de contacto" })}
-            />
-            {errors.contact && (
-              <p className="text-xs text-red-500">{errors.contact.message}</p>
-            )}
-          </div>
-          
+          </div>  
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Camera className="h-4 w-4 text-muted-foreground" />
@@ -136,7 +249,7 @@ export default function ReportForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-blue-500 px-6 py-3.5 text-sm font-semibold text-zinc-950 shadow-lg shadow-blue-500/20 transition-all duration-200 hover:scale-[1.02] hover:bg-blue-400 active:scale-95 disabled:pointer-events-none disabled:opacity-70"
+              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-blue-500 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all duration-200 hover:scale-[1.02] hover:bg-blue-600 active:scale-95 disabled:pointer-events-none disabled:opacity-70"
             >
               {isSubmitting ? (
                 <span className="animate-pulse">Publicando reporte...</span>
