@@ -7,6 +7,7 @@ import type { Comment } from "@/types/comment";
 import Map from "@/components/Map";
 import { useGetReport } from "@/hooks/useGetReport";
 import { useGetCommentsByReport } from "@/hooks/useGetCommentsByReport";
+import { EditReportButton } from "./EditReportButton";
 
 const statusStyles: Record<string, string> = {
   perdido: "bg-red-500/10 text-red-600 dark:text-red-400",
@@ -88,6 +89,10 @@ export const ReportPreview = ({ id }: { id: number }) => {
             Sin foto
           </div>
         )}
+      </div>
+
+      <div className="flex items-center justify-between pt-4">
+        <EditReportButton reportId={report.id} />
       </div>
 
       <div className="px-4 sm:px-0">
