@@ -1,8 +1,6 @@
 import { Animal } from "./animal";
 import { User } from "./user";
 
-//@TODO convert to enum fdp 
-export type AnimalStatus = "perdido" | "encontrado" | "en transito";
 
 export interface Report {
   id: number;

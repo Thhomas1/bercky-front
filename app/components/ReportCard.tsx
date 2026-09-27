@@ -1,11 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { MapPin } from "lucide-react";
 import { motion } from "motion/react";
-import type { Report, AnimalStatus } from "@/types/report";
+import type { Report } from "@/types/report";
+import { Status } from "@/types/enums";
 
-
-const statusStyles: Record<AnimalStatus, string> = {
+const statusStyles: Record<Status, string> = {
   perdido: "bg-red-500/10 text-red-600 dark:text-red-400",
   encontrado: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
   "en transito": "bg-amber-500/10 text-amber-600 dark:text-amber-400",
@@ -15,6 +16,8 @@ export const ReportCard = ({ report }: { report: Report }) => {
   const animalName = `Mascota #${report.animal_id}`;
   const status = report.istransit ? "en transito" : "perdido";
 
+  const hasValidPhoto = report.photo && report.photo.startsWith('http');
+
   return (
     <motion.article
       whileHover={{ y: -6, scale: 1.015 }}
@@ -22,11 +25,19 @@ export const ReportCard = ({ report }: { report: Report }) => {
       className="overflow-hidden rounded-2xl border border-black/5 bg-card shadow-sm dark:border-white/5"
     >
       <div className="relative aspect-4/3 w-full bg-muted sm:aspect-square">
+        {hasValidPhoto ? (
+          <Image
+            src={report.photo as string}
+            alt={animalName}
+            fill
+            className="object-cover"
+          />
+        ) : (
           <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
-            Sin foto 
+            Sin foto
           </div>
+        )}
       </div>
-
       <div className="flex flex-col gap-3 p-5">
         <div className="flex items-center justify-between gap-2">
           <h3 className="text-lg font-semibold text-foreground">
