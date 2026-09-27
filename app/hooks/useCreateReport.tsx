@@ -3,7 +3,7 @@ import { createBrowserClient } from "@supabase/ssr";
 
 const supabase = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
 export const useCreateReport = () => {
@@ -11,10 +11,12 @@ export const useCreateReport = () => {
 
   return useMutation({
     mutationFn: async (formData: FormData) => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-      // tener esto cuando tengamos el user bien 
+      // tener esto cuando tengamos el user bien
       // if (session?.user?.id) {
       //   formData.set("user_id", session.user.id);
       // }
@@ -22,14 +24,20 @@ export const useCreateReport = () => {
       const res = await fetch(`${apiUrl}/reports`, {
         method: "POST",
         headers: {
-          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+          ...(session?.access_token
+            ? { Authorization: `Bearer ${session.access_token}` }
+            : {}),
         },
-        body: formData, 
+        body: formData,
       });
 
       if (!res.ok) {
-        const errorData = await res.json().catch(() => null); 
-        throw new Error(errorData?.error || errorData?.message || `Error del servidor: Status ${res.status}`);
+        const errorData = await res.json().catch(() => null);
+        throw new Error(
+          errorData?.error ||
+            errorData?.message ||
+            `Error del servidor: Status ${res.status}`,
+        );
       }
 
       return res.json();

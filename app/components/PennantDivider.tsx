@@ -1,8 +1,8 @@
 export const PennantDivider = () => {
   return (
     <div className="hidden flex-col items-center md:flex">
-      <div className="h-3 w-3 rounded-full bg-primary/60" />
-      <div className="w-px flex-1 bg-border" />
+      <div className="bg-primary/60 h-3 w-3 rounded-full" />
+      <div className="bg-border w-px flex-1" />
       <svg
         width="56"
         height="120"
@@ -32,7 +32,7 @@ export const PennantDivider = () => {
         </g>
       </svg>
 
-      <div className="w-px flex-1 bg-border" />
+      <div className="bg-border w-px flex-1" />
     </div>
   );
 };

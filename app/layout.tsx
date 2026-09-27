@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Geist, Geist_Mono, Noto_Sans, Playfair_Display } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Noto_Sans,
+  Playfair_Display,
+} from "next/font/google";
 import "./globals.css";
 import { cn } from "./lib/utils";
 import Providers from "./providers";
@@ -27,9 +32,12 @@ const paquito = localFont({
   display: "swap",
 });
 
-const playfairDisplayHeading = Playfair_Display({subsets:['latin'],variable:'--font-heading'});
+const playfairDisplayHeading = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-heading",
+});
 
-const notoSans = Noto_Sans({subsets:['latin'],variable:'--font-sans'});
+const notoSans = Noto_Sans({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,11 +74,9 @@ export default function RootLayout({
         playfairDisplayHeading.variable,
       )}
     >
-      <body className="min-h-full flex flex-col">
-        <Providers> 
-          {children}
-        </Providers>
-        </body>
+      <body className="flex min-h-full flex-col">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

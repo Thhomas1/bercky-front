@@ -1,9 +1,5 @@
-export const Report = () =>  {
-    return (
-     <div className="min-h-screen bg-background pt-10">
-      Report page 
-    </div>
-    )
-}
+export const Report = () => {
+  return <div className="bg-background min-h-screen pt-10">Report page</div>;
+};
 
 export default Report;

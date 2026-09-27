@@ -1,7 +1,6 @@
 import { Animal } from "./animal";
 import { User } from "./user";
 
-
 export interface Report {
   id: number;
   zonereport: string;

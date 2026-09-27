@@ -15,17 +15,12 @@ const statusStyles: Record<AnimalStatus, string> = {
 
 function UserReportRow({ report }: { report: Report }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-black/5 bg-card dark:border-white/5">
-      <div className="aspect-video w-full bg-muted">
+    <div className="bg-card overflow-hidden rounded-xl border border-black/5 dark:border-white/5">
+      <div className="bg-muted aspect-video w-full">
         {report.photo ? (
-          <Image
-            src={report.photo}
-            alt={""}
-            fill
-            className="object-cover"
-          />
+          <Image src={report.photo} alt={""} fill className="object-cover" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex h-full w-full items-center justify-center text-sm">
             Sin foto
           </div>
         )}
@@ -33,22 +28,22 @@ function UserReportRow({ report }: { report: Report }) {
 
       <div className="flex flex-col gap-2 p-4">
         <div className="flex items-center justify-between gap-2">
-          <h4 className="font-semibold text-foreground">
+          <h4 className="text-foreground font-semibold">
             {report.description}
           </h4>
           <span
-            className={`rounded-full px-2.5 py-1 text-xs font-medium capitalize `}
+            className={`rounded-full px-2.5 py-1 text-xs font-medium capitalize`}
           >
             {report.istransit}
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
           <MapPin className="h-3.5 w-3.5" strokeWidth={1.75} />
           <span>{report.spotted}</span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
           <Clock className="h-3.5 w-3.5" strokeWidth={1.75} />
           <span>{report.createdat}</span>
         </div>
@@ -60,16 +55,16 @@ function UserReportRow({ report }: { report: Report }) {
 const ProfileInfo = () => {
   return (
     <div className="flex flex-col items-center text-center md:items-start md:text-left">
-      <div className="relative h-32 w-32 overflow-hidden rounded-full bg-muted">
+      <div className="bg-muted relative h-32 w-32 overflow-hidden rounded-full">
         {/* TODO: foto real del usuario cuando exista avatarUrl */}
-        <div className="flex h-full w-full items-center justify-center text-3xl font-semibold text-muted-foreground">
+        <div className="text-muted-foreground flex h-full w-full items-center justify-center text-3xl font-semibold">
           {mockUser.name.charAt(0).toUpperCase()}
         </div>
       </div>
-      <h1 className="mt-4 font-display text-2xl text-foreground sm:text-3xl">
+      <h1 className="font-display text-foreground mt-4 text-2xl sm:text-3xl">
         {mockUser.name}
       </h1>
-      <div className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
+      <div className="text-muted-foreground mt-3 flex flex-col gap-2 text-sm">
         <div className="flex items-center justify-center gap-1.5 md:justify-start">
           <Mail className="h-4 w-4" strokeWidth={1.75} />
           <span>{mockUser.email}</span>
@@ -87,7 +82,7 @@ const ProfileInfo = () => {
       </div>
     </div>
   );
-}
+};
 
 export const Profile = () => {
   return (
@@ -99,7 +94,7 @@ export const Profile = () => {
         <Separator className="md:hidden" />
         <PennantDivider />
         <div className="flex-1">
-          <h2 className="mb-4 text-lg font-bold text-foreground sm:text-xl">
+          <h2 className="text-foreground mb-4 text-lg font-bold sm:text-xl">
             Tus reportes
           </h2>
           <div className="flex flex-col gap-4">

@@ -3,27 +3,25 @@
 import Image from "next/image";
 import Link from "next/link";
 
-
 const shelters = [
-    {
-      id: 1,
-      name: "Adopciones Quilmes",
-      logo: "/images/refugioQuilmes.jpg",
-      instagram: "https://www.instagram.com/adopcionesquilmes/?hl=es-la",
-    },
-     {
-      id: 2,
-      name: "Ser Animal",
-      logo: "/images/serAnimal.jpg",
-      instagram: "https://www.instagram.com/ser.animal/?hl=es",
-    },
-  ];
+  {
+    id: 1,
+    name: "Adopciones Quilmes",
+    logo: "/images/refugioQuilmes.jpg",
+    instagram: "https://www.instagram.com/adopcionesquilmes/?hl=es-la",
+  },
+  {
+    id: 2,
+    name: "Ser Animal",
+    logo: "/images/serAnimal.jpg",
+    instagram: "https://www.instagram.com/ser.animal/?hl=es",
+  },
+];
 
 export const Shelters = () => {
-
   return (
     <section className="mx-auto mt-12 max-w-4xl rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 text-center backdrop-blur-sm">
-       <h2 className="mb-8 text-xl font-bold tracking-tight text-zinc-100 sm:text-2xl">
+      <h2 className="mb-8 text-xl font-bold tracking-tight text-zinc-100 sm:text-2xl">
         Si querés ayudar al pueblo, Doná a los refugios!
       </h2>
       <div className="flex flex-wrap justify-center gap-6 sm:gap-8">
@@ -43,7 +41,7 @@ export const Shelters = () => {
                 className="object-cover transition-transform duration-300 group-hover:scale-110"
               />
             </div>
-            <span className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 scale-0 rounded-lg bg-zinc-950 border border-zinc-800 px-3 py-1.5 text-xs font-medium text-white transition-all group-hover:scale-100 whitespace-nowrap shadow-xl">
+            <span className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 scale-0 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs font-medium whitespace-nowrap text-white shadow-xl transition-all group-hover:scale-100">
               {shelter.name}
             </span>
           </Link>

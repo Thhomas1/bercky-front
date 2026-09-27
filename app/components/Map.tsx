@@ -11,7 +11,9 @@ export const Map = ({ lat, lng, label, height = "h-48" }: MapPreviewProps) => {
   const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&marker=${lat},${lng}&layer=mapnik`;
 
   return (
-    <div className={`overflow-hidden rounded-xl border border-border ${height}`}>
+    <div
+      className={`border-border overflow-hidden rounded-xl border ${height}`}
+    >
       <iframe
         src={src}
         title={label ?? "Ubicación en el mapa"}

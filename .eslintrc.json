@@ -1,3 +1,3 @@
 {
-    "extends": ["nest/core-web-vitals", "prettier"]
+  "extends": ["nest/core-web-vitals", "prettier"]
 }

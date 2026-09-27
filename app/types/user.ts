@@ -7,11 +7,10 @@ export interface User {
   id: number;
   name: string;
   email: string;
-  role?: Role; 
+  role?: Role;
   created_at: Date;
-  supabase_id?: string; 
+  supabase_id?: string;
 }
-
 
 // Currently not being used if we only use SSO
 export interface RegisterDto {

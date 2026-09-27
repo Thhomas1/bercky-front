@@ -10,22 +10,26 @@ import { Button } from "@/components/ui/button";
 export const Navbar = () => {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(true);
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       setIsLoggedIn(!!session);
       setIsLoading(false);
     };
     checkUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
     });
 
@@ -34,16 +38,19 @@ export const Navbar = () => {
 
   const handleLogout = async () => {
     // chau sesion en supa y borra la cookie automáticamente
-    await supabase.auth.signOut(); 
-    
+    await supabase.auth.signOut();
+
     router.refresh();
     router.push("/");
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
+    <header className="border-border bg-background/80 sticky top-0 z-40 border-b backdrop-blur-md">
       <div className="mx-auto flex items-center justify-between px-4 py-4 sm:px-6">
-        <Link href="/" className="font-display text-2xl text-foreground sm:text-3xl">
+        <Link
+          href="/"
+          className="font-display text-foreground text-2xl sm:text-3xl"
+        >
           Bercky
         </Link>
         {!isLoading && (
@@ -53,7 +60,7 @@ export const Navbar = () => {
                 type="button"
                 onClick={handleLogout}
                 aria-label="Cerrar sesión"
-                className="flex items-center justify-center rounded-full p-2 text-muted-foreground transition-colors hover:bg-red-500/10 hover:text-red-500"
+                className="text-muted-foreground flex items-center justify-center rounded-full p-2 transition-colors hover:bg-red-500/10 hover:text-red-500"
               >
                 <LogOut className="h-5 w-5" strokeWidth={1.75} />
               </button>

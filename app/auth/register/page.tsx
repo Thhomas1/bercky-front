@@ -17,7 +17,6 @@ import GoogleIcon from "../../../public/icons/googleIcon";
 import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "next/navigation";
 
-
 const registerSchema = z.object({
   name: z.string().min(2, "Ingresá tu nombre completo"),
   email: z.string().email("Ingresá un email válido"),
@@ -29,10 +28,13 @@ type RegisterValues = z.infer<typeof registerSchema>;
 
 export const Register = () => {
   const router = useRouter();
-  
-  const supabase = createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
   //@TODO migrate when we finish the SSN
-  
+
   const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -44,35 +46,37 @@ export const Register = () => {
 
   async function onSubmit(values: RegisterValues) {
     const { data, error } = await supabase.auth.signUp({
-    email: values.email,
-    password: values.password,
-    options: {
-      data: {
-        full_name: values.name, // supabase aca sabe cómo se llama y se lo pasa al Trigger
-      }
-    }
-  });
+      email: values.email,
+      password: values.password,
+      options: {
+        data: {
+          full_name: values.name, // supabase aca sabe cómo se llama y se lo pasa al Trigger
+        },
+      },
+    });
 
-  if (error) {
-    console.error("Error al registrar:", error.message);
-    return;
-  }
-    router.push('/');
+    if (error) {
+      console.error("Error al registrar:", error.message);
+      return;
+    }
+    router.push("/");
   }
 
   async function handleGoogleSignup() {
     await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo: `${window.location.origin}/auth/callback?next=/report` }
-  })
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=/report`,
+      },
+    });
   }
 
   return (
     <div className="flex min-h-screen w-full">
       <div className="flex w-full items-center justify-center px-6 py-12 sm:px-10 md:w-1/2 md:px-12 lg:px-16">
         <div className="w-full max-w-md">
-          <h1 className="font-display text-3xl text-foreground">Bercky</h1>
-          <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
+          <h1 className="font-display text-foreground text-3xl">Bercky</h1>
+          <p className="text-muted-foreground mt-2 max-w-xs text-sm leading-relaxed">
             Creá tu cuenta y empezá a ayudar a reunir familias con sus mascotas.
           </p>
 
@@ -158,8 +162,8 @@ export const Register = () => {
             {form.formState.isSubmitting ? "Creando cuenta..." : "Crear cuenta"}
           </Button>
           <div className="my-5 flex items-center gap-3">
-            <span className="h-px flex-1 bg-border" />
-            <span className="h-px flex-1 bg-border" />
+            <span className="bg-border h-px flex-1" />
+            <span className="bg-border h-px flex-1" />
           </div>
 
           <Button
@@ -171,11 +175,11 @@ export const Register = () => {
             <GoogleIcon />
             Registrate con Google
           </Button>
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-6 text-center text-sm">
             ¿Ya tenés cuenta?{" "}
             <Link
               href="/auth/login"
-              className="font-medium text-foreground underline-offset-4 hover:underline"
+              className="text-foreground font-medium underline-offset-4 hover:underline"
             >
               Iniciá sesión
             </Link>
@@ -191,7 +195,7 @@ export const Register = () => {
           sizes="50vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to from-background/60 via-transparent to-transparent" />
+        <div className="bg-gradient-to from-background/60 absolute inset-0 via-transparent to-transparent" />
       </div>
     </div>
   );

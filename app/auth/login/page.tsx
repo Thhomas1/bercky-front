@@ -24,13 +24,13 @@ const loginSchema = z.object({
 
 type LoginValues = z.infer<typeof loginSchema>;
 
-
 export const Login = () => {
-  
   const router = useRouter();
-  const supabase = createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
   //@TODO migrate when we finish the SSN
-
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -39,33 +39,35 @@ export const Login = () => {
       password: "",
     },
   });
-  
+
   async function onSubmit(values: LoginValues) {
     const { data, error } = await supabase.auth.signInWithPassword({
-    email: values.email,
-    password: values.password,
-  });
+      email: values.email,
+      password: values.password,
+    });
 
-  if (error) {
-    console.error("Error de login:", error.message);
-    return;
-  }
-    router.push('/');
+    if (error) {
+      console.error("Error de login:", error.message);
+      return;
+    }
+    router.push("/");
   }
 
   async function handleGoogleLogin() {
     await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=/report` }
-    })
-  } 
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=/report`,
+      },
+    });
+  }
 
   return (
     <div className="flex min-h-screen w-full">
       <div className="flex w-full items-center justify-center px-6 py-12 sm:px-10 md:w-1/2 md:px-12 lg:px-16">
         <div className="w-full max-w-md">
-          <h1 className="font-display text-3xl text-foreground">Bercky</h1>
-          <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
+          <h1 className="font-display text-foreground text-3xl">Bercky</h1>
+          <p className="text-muted-foreground mt-2 max-w-xs text-sm leading-relaxed">
             Iniciá sesión para ver los reportes en nuestro pueblo
           </p>
 
@@ -101,9 +103,7 @@ export const Login = () => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="login-password">
-                      Contraseña
-                    </FieldLabel>
+                    <FieldLabel htmlFor="login-password">Contraseña</FieldLabel>
                     <Input
                       {...field}
                       id="login-password"
@@ -131,11 +131,11 @@ export const Login = () => {
           </Button>
 
           <div className="my-5 flex items-center gap-3">
-            <span className="h-px flex-1 bg-border" />
-            <span className="text-xs uppercase text-muted-foreground">
+            <span className="bg-border h-px flex-1" />
+            <span className="text-muted-foreground text-xs uppercase">
               o registrate + rapido
             </span>
-            <span className="h-px flex-1 bg-border" />
+            <span className="bg-border h-px flex-1" />
           </div>
 
           <Button
@@ -148,18 +148,18 @@ export const Login = () => {
             Inicia con Google
           </Button>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-6 text-center text-sm">
             ¿No tenés cuenta?{" "}
             <Link
               href="/auth/register"
-              className="font-medium text-foreground underline-offset-4 hover:underline"
+              className="text-foreground font-medium underline-offset-4 hover:underline"
             >
               Registrate
             </Link>
           </p>
         </div>
       </div>
-                {/* luego poner un random para poner varios animales en la portada */}
+      {/* luego poner un random para poner varios animales en la portada */}
       <div className="relative hidden w-1/2 md:block">
         <Image
           src="/images/login.jpg"
@@ -169,7 +169,7 @@ export const Login = () => {
           sizes="50vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to from-background/60 via-transparent to-transparent" />
+        <div className="bg-gradient-to from-background/60 absolute inset-0 via-transparent to-transparent" />
       </div>
     </div>
   );
