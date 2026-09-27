@@ -29,7 +29,6 @@ export default function EditReportPage({
         No se encontró el reporte.
       </p>
     );
-  console.log("report", report);
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-8">
