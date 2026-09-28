@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useUpdateReport } from "@/hooks/useUpdateReport";
+import { toast } from "sonner"; // <--- Importante para los avisos
 
 type EditReportFormValues = {
   id: number;
@@ -64,7 +65,6 @@ export default function EditReportForm({
         dirtyFields,
       ) as (keyof EditReportFormValues)[]) {
         if (key === "status") {
-          // obligatorio para cambiar
           formData.append("status", data.status);
           formData.append("istransit", String(data.status === "en transito"));
         } else if (key !== "photo") {
@@ -81,6 +81,7 @@ export default function EditReportForm({
 
       await updateReportMutation.mutateAsync(formData);
 
+      toast.success("¡Reporte actualizado con éxito!");
       router.push(`/report/${report.id}`);
     } catch (error) {
       console.error("Error al actualizar el reporte:", error);
@@ -94,11 +95,11 @@ export default function EditReportForm({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="w-full overflow-hidden rounded-2xl border border-black/5 bg-card p-6 shadow-lg dark:border-white/5 sm:p-8"
+      className="bg-card w-full overflow-hidden rounded-2xl border border-black/5 p-6 shadow-lg sm:p-8 dark:border-white/5"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-3">
-          <label className="text-sm font-semibold text-foreground">
+          <label className="text-foreground text-sm font-semibold">
             ¿Cuál es la situación actual? *
           </label>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -106,7 +107,7 @@ export default function EditReportForm({
               (statusOption) => (
                 <label
                   key={statusOption}
-                  className="has-[:checked]:bg-amber-500/10 has-[:checked]:text-amber-600 dark:has-[:checked]:text-amber-400 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-background px-4 py-3 text-sm font-medium capitalize transition-all hover:bg-muted has-[:checked]:border-amber-500 dark:border-zinc-800"
+                  className="bg-background hover:bg-muted flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-zinc-200 px-4 py-3 text-sm font-medium capitalize transition-all has-[:checked]:border-amber-500 has-[:checked]:bg-amber-500/10 has-[:checked]:text-amber-600 dark:border-zinc-800 dark:has-[:checked]:text-amber-400"
                 >
                   <input
                     type="radio"
@@ -126,24 +127,24 @@ export default function EditReportForm({
         <hr className="border-black/5 dark:border-white/5" />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <PawPrint className="h-4 w-4 text-muted-foreground" />
+            <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
+              <PawPrint className="text-muted-foreground h-4 w-4" />
               Nombre
             </label>
             <input
               type="text"
-              className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 dark:border-zinc-800"
+              className="bg-background flex h-11 w-full rounded-xl border border-zinc-200 px-4 py-2 text-sm focus:ring-2 focus:ring-amber-500/50 focus:outline-none dark:border-zinc-800"
               {...register("animal_name")}
             />
           </div>
 
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Tag className="h-4 w-4 text-muted-foreground" />
+            <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
+              <Tag className="text-muted-foreground h-4 w-4" />
               Tipo de animal *
             </label>
             <select
-              className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 dark:border-zinc-800"
+              className="bg-background flex h-11 w-full rounded-xl border border-zinc-200 px-4 py-2 text-sm focus:ring-2 focus:ring-amber-500/50 focus:outline-none dark:border-zinc-800"
               {...register("animal_type")}
             >
               <option value="perro">Perro</option>
@@ -153,25 +154,25 @@ export default function EditReportForm({
           </div>
 
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Info className="h-4 w-4 text-muted-foreground" />
+            <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
+              <Info className="text-muted-foreground h-4 w-4" />
               Raza
             </label>
             <input
               type="text"
-              className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 dark:border-zinc-800"
+              className="bg-background flex h-11 w-full rounded-xl border border-zinc-200 px-4 py-2 text-sm focus:ring-2 focus:ring-amber-500/50 focus:outline-none dark:border-zinc-800"
               {...register("animal_breed")}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <Ruler className="h-4 w-4 text-muted-foreground" />
+              <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
+                <Ruler className="text-muted-foreground h-4 w-4" />
                 Tamaño *
               </label>
               <select
-                className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 dark:border-zinc-800"
+                className="bg-background flex h-11 w-full rounded-xl border border-zinc-200 px-4 py-2 text-sm focus:ring-2 focus:ring-amber-500/50 focus:outline-none dark:border-zinc-800"
                 {...register("animal_size")}
               >
                 <option value="peque">Pequeño</option>
@@ -181,14 +182,14 @@ export default function EditReportForm({
             </div>
 
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
+              <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
+                <Calendar className="text-muted-foreground h-4 w-4" />
                 Edad aprox.
               </label>
               <input
                 type="number"
                 min="0"
-                className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 dark:border-zinc-800"
+                className="bg-background flex h-11 w-full rounded-xl border border-zinc-200 px-4 py-2 text-sm focus:ring-2 focus:ring-amber-500/50 focus:outline-none dark:border-zinc-800"
                 {...register("animal_age")}
               />
             </div>
@@ -199,13 +200,13 @@ export default function EditReportForm({
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <MapPin className="h-4 w-4 text-muted-foreground" />
+            <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
+              <MapPin className="text-muted-foreground h-4 w-4" />
               Zona / Barrio *
             </label>
             <input
               type="text"
-              className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 dark:border-zinc-800"
+              className="bg-background flex h-11 w-full rounded-xl border border-zinc-200 px-4 py-2 text-sm focus:ring-2 focus:ring-amber-500/50 focus:outline-none dark:border-zinc-800"
               {...register("zonereport", {
                 required: "La zona es obligatoria",
               })}
@@ -218,13 +219,13 @@ export default function EditReportForm({
           </div>
 
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Map className="h-4 w-4 text-muted-foreground" />
+            <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
+              <Map className="text-muted-foreground h-4 w-4" />
               Lugar exacto *
             </label>
             <input
               type="text"
-              className="flex h-11 w-full rounded-xl border border-zinc-200 bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 dark:border-zinc-800"
+              className="bg-background flex h-11 w-full rounded-xl border border-zinc-200 px-4 py-2 text-sm focus:ring-2 focus:ring-amber-500/50 focus:outline-none dark:border-zinc-800"
               {...register("spotted", {
                 required: "El lugar exacto es obligatorio",
               })}
@@ -236,35 +237,35 @@ export default function EditReportForm({
         </div>
 
         <div className="space-y-2">
-          <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
-            <Info className="h-4 w-4 text-muted-foreground" />
+          <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
+            <Info className="text-muted-foreground h-4 w-4" />
             Descripción
           </label>
           <textarea
             rows={3}
-            className="flex w-full resize-none rounded-xl border border-zinc-200 bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 dark:border-zinc-800"
+            className="bg-background flex w-full resize-none rounded-xl border border-zinc-200 px-4 py-3 text-sm focus:ring-2 focus:ring-amber-500/50 focus:outline-none dark:border-zinc-800"
             {...register("description")}
           />
         </div>
 
         <div className="space-y-2">
-          <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
-            <Camera className="h-4 w-4 text-muted-foreground" />
+          <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
+            <Camera className="text-muted-foreground h-4 w-4" />
             Cambiar foto (Opcional)
           </label>
           <input
             type="file"
             accept="image/*"
-            className="flex w-full cursor-pointer rounded-xl border border-zinc-200 bg-background px-3 py-2 text-sm text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500/50 file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-amber-500/10 file:px-4 file:py-1.5 file:text-sm file:font-semibold file:text-amber-600 hover:file:bg-amber-500/20 dark:border-zinc-800"
+            className="bg-background text-muted-foreground flex w-full cursor-pointer rounded-xl border border-zinc-200 px-3 py-2 text-sm file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-amber-500/10 file:px-4 file:py-1.5 file:text-sm file:font-semibold file:text-amber-600 hover:file:bg-amber-500/20 focus:ring-2 focus:ring-amber-500/50 focus:outline-none dark:border-zinc-800"
             {...register("photo")}
           />
         </div>
 
-        <div className="pt-4 flex gap-3">
+        <div className="flex gap-3 pt-4">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex-1 rounded-xl border border-zinc-200 bg-background px-6 py-3.5 text-sm font-semibold text-foreground transition-all hover:bg-muted dark:border-zinc-800"
+            className="bg-background text-foreground hover:bg-muted flex-1 rounded-xl border border-zinc-200 px-6 py-3.5 text-sm font-semibold transition-all dark:border-zinc-800"
           >
             Cancelar
           </button>
@@ -272,7 +273,7 @@ export default function EditReportForm({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 group flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-6 py-3.5 text-sm font-semibold text-zinc-950 shadow-lg shadow-amber-500/20 transition-all duration-200 hover:scale-[1.02] hover:bg-amber-400 active:scale-95 disabled:pointer-events-none disabled:opacity-70"
+            className="group flex flex-1 items-center justify-center gap-2 rounded-xl bg-amber-500 px-6 py-3.5 text-sm font-semibold text-zinc-950 shadow-lg shadow-amber-500/20 transition-all duration-200 hover:scale-[1.02] hover:bg-amber-400 active:scale-95 disabled:pointer-events-none disabled:opacity-70"
           >
             {isSubmitting ? (
               <span className="animate-pulse">Guardando cambios...</span>

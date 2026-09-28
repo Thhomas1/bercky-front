@@ -9,6 +9,7 @@ import {
 import "./globals.css";
 import { cn } from "./lib/utils";
 import Providers from "./providers";
+import { Toaster } from "sonner";
 
 const paquito = localFont({
   src: [
@@ -76,6 +77,7 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col">
         <Providers>{children}</Providers>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

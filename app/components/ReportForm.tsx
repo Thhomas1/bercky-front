@@ -14,7 +14,8 @@ import {
   Map,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCreateReport } from "@/hooks/useCreateReport"; // Tu hook ahora debe recibir FormData
+import { useCreateReport } from "@/hooks/useCreateReport";
+import { toast } from "sonner"; // <--- Importamos sonner
 
 type ReportFormValues = {
   status: "perdido" | "encontrado" | "en transito";
@@ -63,14 +64,15 @@ export default function ReportForm() {
       formData.append("animal_size", data.animal_size);
       formData.append("animal_age", String(data.animal_age || 1));
 
-      //@hardcodeado revisar luego del auth
-      formData.append("user_id", "1");
-
       if (data.photo && data.photo.length > 0) {
         formData.append("imageFile", data.photo[0]);
       }
 
       await createReportMutation.mutateAsync(formData);
+
+      toast.success("¡Reporte creado con éxito!", {
+        description: "Tu reporte ya está visible para toda la comunidad.",
+      });
 
       router.push("/");
     } catch (error) {
@@ -113,6 +115,7 @@ export default function ReportForm() {
                       type="radio"
                       value={statusOption}
                       className="sr-only"
+                      defaultChecked={statusOption === "perdido"}
                       {...register("status", {
                         required: "Seleccioná una opción",
                       })}

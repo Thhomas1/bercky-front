@@ -8,7 +8,6 @@ export const useGetProfile = () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      console.log("session", session);
       if (!session?.access_token) {
         throw new Error("No hay sesión activa");
       }
@@ -22,8 +21,6 @@ export const useGetProfile = () => {
           },
         },
       );
-
-      console.log("res", res);
 
       if (!res.ok) throw new Error("Error al cargar el perfil");
 
