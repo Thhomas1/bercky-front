@@ -14,8 +14,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import GoogleIcon from "../../../public/icons/googleIcon";
-import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supa";
 
 const loginSchema = z.object({
   email: z.string().email("Ingresá un email válido"),
@@ -26,11 +26,6 @@ type LoginValues = z.infer<typeof loginSchema>;
 
 export const Login = () => {
   const router = useRouter();
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
-  //@TODO migrate when we finish the SSN
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -48,8 +43,14 @@ export const Login = () => {
 
     if (error) {
       console.error("Error de login:", error.message);
+      form.setError("root", {
+        type: "manual",
+        message: "Email o contraseña incorrectos",
+      });
       return;
     }
+
+    router.refresh();
     router.push("/");
   }
 

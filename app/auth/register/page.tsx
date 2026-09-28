@@ -38,7 +38,7 @@ export const Register = () => {
     },
   });
 
-  async function onSubmit(values: RegisterValues) {
+  const onSubmit = async (values: RegisterValues) => {
     const { data, error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
@@ -51,10 +51,19 @@ export const Register = () => {
 
     if (error) {
       console.error("Error al registrar:", error.message);
+      form.setError("root", {
+        type: "manual",
+        message:
+          error.message === "User already registered"
+            ? "Este email ya está en uso"
+            : "Ocurrió un error al crear la cuenta",
+      });
       return;
     }
+
+    router.refresh();
     router.push("/");
-  }
+  };
 
   async function handleGoogleSignup() {
     await supabase.auth.signInWithOAuth({
