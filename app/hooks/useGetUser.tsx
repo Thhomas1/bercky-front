@@ -1,9 +1,9 @@
 import { supabase } from "@/lib/supa";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetReport = (id: number) => {
+export const useGetUser = (id: number) => {
   return useQuery({
-    queryKey: ["report", id],
+    queryKey: ["user", id],
     queryFn: async () => {
       const {
         data: { session },
@@ -18,11 +18,11 @@ export const useGetReport = (id: number) => {
       }
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/reports/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/users/${id}`,
         { headers },
       );
 
-      if (!res.ok) throw new Error("Error al cargar el reporte");
+      if (!res.ok) throw new Error("Error al cargar el usuario");
 
       return res.json();
     },

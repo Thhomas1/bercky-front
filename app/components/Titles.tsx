@@ -25,9 +25,6 @@ export const Titles = () => {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="flex flex-col items-center px-4 py-16 text-center sm:py-24"
       >
-        <span className="mb-6 inline-flex items-center rounded-full bg-blue-950/40 px-3 py-1 text-xs font-semibold text-sky-400 ring-1 ring-blue-500/30 ring-inset">
-          📍 Red Comunitaria de Bernal
-        </span>
         <h1 className="font-display text-foreground flex min-h-[7rem] flex-col items-center justify-center gap-x-3 gap-y-1 text-4xl font-bold tracking-tight sm:min-h-0 sm:flex-row sm:text-5xl md:text-6xl">
           <span>Buscá a tu</span>
           <span className="relative inline-block h-[1.2em] w-full overflow-hidden text-center sm:w-[260px] sm:text-left md:w-[320px]">
