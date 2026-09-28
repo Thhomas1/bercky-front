@@ -11,11 +11,9 @@ export const useCreateReport = () => {
       } = await supabase.auth.getSession();
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-      // tener esto cuando tengamos el user bien
-      // if (session?.user?.id) {
-      //   formData.set("user_id", session.user.id);
-      // }
-
+      if (!session?.access_token) {
+        throw new Error("Debes iniciar sesión para crear un reporte");
+      }
       const res = await fetch(`${apiUrl}/reports`, {
         method: "POST",
         headers: {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useGetUser } from "@/hooks/useGetUser"; // Ajustá esta ruta según dónde guardaste tu hook
+import { useGetUser } from "@/hooks/useGetUser";
 import { Button } from "@/components/ui/button";
 
 export default function UserProfilePage() {

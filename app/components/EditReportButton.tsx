@@ -1,11 +1,19 @@
-// src/components/EditReportButton.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
 import { Pencil } from "lucide-react";
+import { useGetProfile } from "@/hooks/useGetProfile";
 
-export const EditReportButton = ({ reportId }: { reportId: number }) => {
+interface EditButtonProps {
+  reportId: number;
+  ownerId: number;
+}
+
+export const EditReportButton = ({ reportId, ownerId }: EditButtonProps) => {
   const router = useRouter();
+  const { data: currentUser, isLoading } = useGetProfile();
+
+  if (isLoading || !currentUser || currentUser.id !== ownerId) return null;
 
   const handleEditClick = () => {
     router.push(`/report/${reportId}/edit`);

@@ -63,10 +63,10 @@ const DetailItem = ({
   );
 };
 
-export const ReportPreview = ({ id }: { id: number }) => {
-  const { data: report, isLoading, isError } = useGetReport(id);
+export const ReportPreview = ({ id: reportId }: { id: number }) => {
+  const { data: report, isLoading, isError } = useGetReport(reportId);
   const { data: comments, isLoading: isLoadingComments } =
-    useGetCommentsByReport(id);
+    useGetCommentsByReport(reportId);
 
   if (isLoading)
     return <p className="text-muted-foreground p-10">Cargando...</p>;
@@ -92,7 +92,7 @@ export const ReportPreview = ({ id }: { id: number }) => {
       </div>
 
       <div className="flex items-center justify-between pt-4">
-        <EditReportButton reportId={report.id} />
+        <EditReportButton reportId={report.id} ownerId={report.user.id} />
       </div>
 
       <div className="px-4 sm:px-0">

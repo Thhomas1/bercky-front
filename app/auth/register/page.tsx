@@ -14,8 +14,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import GoogleIcon from "../../../public/icons/googleIcon";
-import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supa";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Ingresá tu nombre completo"),
@@ -28,12 +28,6 @@ type RegisterValues = z.infer<typeof registerSchema>;
 
 export const Register = () => {
   const router = useRouter();
-
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
-  //@TODO migrate when we finish the SSN
 
   const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
@@ -50,7 +44,7 @@ export const Register = () => {
       password: values.password,
       options: {
         data: {
-          full_name: values.name, // supabase aca sabe cómo se llama y se lo pasa al Trigger
+          full_name: values.name,
         },
       },
     });
