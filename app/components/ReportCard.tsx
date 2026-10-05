@@ -8,14 +8,16 @@ import type { Report } from "@/types/report";
 import { Status } from "@/types/enums";
 
 const statusStyles: Record<Status, string> = {
-  perdido: "bg-red-500/10 text-red-600 dark:text-red-400",
-  encontrado: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  "en transito": "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  [Status.Perdido]: "bg-red-500/10 text-red-600 dark:text-red-400",
+  [Status.Encontrado]:
+    "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  [Status.Transito]: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
 };
 
 export const ReportCard = ({ report }: { report: Report }) => {
   const animalName = `Mascota #${report.animal_id}`;
-  const status = report.istransit ? "en transito" : "perdido";
+
+  const status = report.istransit ? Status.Transito : Status.Perdido;
 
   const hasValidPhoto = report.photo && report.photo.startsWith("http");
 
@@ -48,7 +50,7 @@ export const ReportCard = ({ report }: { report: Report }) => {
             <span
               className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusStyles[status]}`}
             >
-              {report.istransit ? "en transito" : "perdido"}
+              {status}
             </span>
           </div>
 

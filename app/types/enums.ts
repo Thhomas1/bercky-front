@@ -1,11 +1,21 @@
-export type AnimalType =
-  | "perro"
-  | "gato"
-  | "loro"
-  | "conejo"
-  | "hamster"
-  | "tortuga"
-  | "otro";
-export type Status = "perdido" | "encontrado" | "en transito";
-export type Size = "peque" | "mediano" | "grande";
-//convert fokin enum
+export enum AnimalType {
+  Perro = "perro",
+  Gato = "gato",
+  Loro = "loro",
+  Conejo = "conejo",
+  Hamster = "hamster",
+  Tortuga = "tortuga",
+  Otro = "otro",
+}
+
+export enum Status {
+  Perdido = "perdido",
+  Encontrado = "encontrado",
+  Transito = "transito",
+}
+
+export enum Size {
+  Peque = "peque",
+  Mediano = "mediano",
+  Grande = "grande",
+}

@@ -15,17 +15,18 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCreateReport } from "@/hooks/useCreateReport";
-import { toast } from "sonner"; // <--- Importamos sonner
+import { toast } from "sonner";
+import { Status, AnimalType, Size } from "@/types/enums"; // <-- Importamos los Enums
 
 type ReportFormValues = {
-  status: "perdido" | "encontrado" | "en transito";
+  status: Status;
   zonereport: string;
   spotted: string;
   description: string;
   animal_name: string;
-  animal_type: "perro" | "gato" | "otro";
+  animal_type: AnimalType;
   animal_breed: string;
-  animal_size: "peque" | "mediano" | "grande";
+  animal_size: Size;
   animal_age: number;
   photo: FileList;
 };
@@ -40,9 +41,9 @@ export default function ReportForm() {
     formState: { errors },
   } = useForm<ReportFormValues>({
     defaultValues: {
-      status: "perdido",
-      animal_type: "perro",
-      animal_size: "mediano",
+      status: Status.Perdido,
+      animal_type: AnimalType.Perro,
+      animal_size: Size.Mediano,
     },
   });
 
@@ -52,7 +53,7 @@ export default function ReportForm() {
 
       // reporte
       formData.append("status", data.status);
-      formData.append("istransit", String(data.status === "en transito"));
+      formData.append("istransit", String(data.status === Status.Transito)); // <-- Usamos el Enum
       formData.append("zonereport", data.zonereport);
       formData.append("spotted", data.spotted);
       formData.append("description", data.description);
@@ -105,7 +106,8 @@ export default function ReportForm() {
               ¿Cuál es la situación?
             </label>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {(["perdido", "en transito", "encontrado"] as const).map(
+              {/* <-- Iteramos sobre los valores del Enum --> */}
+              {[Status.Perdido, Status.Transito, Status.Encontrado].map(
                 (statusOption) => (
                   <label
                     key={statusOption}
@@ -115,7 +117,7 @@ export default function ReportForm() {
                       type="radio"
                       value={statusOption}
                       className="sr-only"
-                      defaultChecked={statusOption === "perdido"}
+                      defaultChecked={statusOption === Status.Perdido}
                       {...register("status", {
                         required: "Seleccioná una opción",
                       })}
@@ -151,9 +153,9 @@ export default function ReportForm() {
                 className="bg-background flex h-11 w-full rounded-xl border border-zinc-200 px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500/50 focus:outline-none dark:border-zinc-800"
                 {...register("animal_type")}
               >
-                <option value="perro">Perro</option>
-                <option value="gato">Gato</option>
-                <option value="otro">Otro</option>
+                <option value={AnimalType.Perro}>Perro</option>
+                <option value={AnimalType.Gato}>Gato</option>
+                <option value={AnimalType.Otro}>Otro</option>
               </select>
             </div>
 
@@ -180,9 +182,9 @@ export default function ReportForm() {
                   className="bg-background flex h-11 w-full rounded-xl border border-zinc-200 px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500/50 focus:outline-none dark:border-zinc-800"
                   {...register("animal_size")}
                 >
-                  <option value="peque">Pequeño</option>
-                  <option value="mediano">Mediano</option>
-                  <option value="grande">Grande</option>
+                  <option value={Size.Peque}>Pequeño</option>
+                  <option value={Size.Mediano}>Mediano</option>
+                  <option value={Size.Grande}>Grande</option>
                 </select>
               </div>
 

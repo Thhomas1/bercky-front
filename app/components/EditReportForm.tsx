@@ -15,18 +15,19 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useUpdateReport } from "@/hooks/useUpdateReport";
-import { toast } from "sonner"; // <--- Importante para los avisos
+import { toast } from "sonner";
+import { Status, AnimalType, Size } from "@/types/enums";
 
 type EditReportFormValues = {
   id: number;
-  status: "perdido" | "encontrado" | "en transito";
+  status: Status;
   zonereport: string;
   spotted: string;
   description: string;
   animal_name: string;
-  animal_type: "perro" | "gato" | "otro";
+  animal_type: AnimalType;
   animal_breed: string;
-  animal_size: "peque" | "mediano" | "grande";
+  animal_size: Size;
   animal_age: number;
   photo: FileList;
 };
@@ -50,9 +51,9 @@ export default function EditReportForm({
       spotted: report.spotted || "",
       description: report.description || "",
       animal_name: report.animal_name || "",
-      animal_type: report.animal_type || "perro",
+      animal_type: report.animal_type || AnimalType.Perro,
       animal_breed: report.animal_breed || "",
-      animal_size: report.animal_size || "mediano",
+      animal_size: report.animal_size || Size.Mediano,
       animal_age: report.animal_age || 1,
     },
   });
@@ -66,7 +67,7 @@ export default function EditReportForm({
       ) as (keyof EditReportFormValues)[]) {
         if (key === "status") {
           formData.append("status", data.status);
-          formData.append("istransit", String(data.status === "en transito"));
+          formData.append("istransit", String(data.status === Status.Transito));
         } else if (key !== "photo") {
           const value = data[key];
           if (value !== undefined && value !== null && value !== "") {
@@ -103,7 +104,7 @@ export default function EditReportForm({
             ¿Cuál es la situación actual? *
           </label>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {(["perdido", "en transito", "encontrado"] as const).map(
+            {[Status.Perdido, Status.Transito, Status.Encontrado].map(
               (statusOption) => (
                 <label
                   key={statusOption}
@@ -147,9 +148,9 @@ export default function EditReportForm({
               className="bg-background flex h-11 w-full rounded-xl border border-zinc-200 px-4 py-2 text-sm focus:ring-2 focus:ring-amber-500/50 focus:outline-none dark:border-zinc-800"
               {...register("animal_type")}
             >
-              <option value="perro">Perro</option>
-              <option value="gato">Gato</option>
-              <option value="otro">Otro</option>
+              <option value={AnimalType.Perro}>Perro</option>
+              <option value={AnimalType.Gato}>Gato</option>
+              <option value={AnimalType.Otro}>Otro</option>
             </select>
           </div>
 
@@ -175,9 +176,9 @@ export default function EditReportForm({
                 className="bg-background flex h-11 w-full rounded-xl border border-zinc-200 px-4 py-2 text-sm focus:ring-2 focus:ring-amber-500/50 focus:outline-none dark:border-zinc-800"
                 {...register("animal_size")}
               >
-                <option value="peque">Pequeño</option>
-                <option value="mediano">Mediano</option>
-                <option value="grande">Grande</option>
+                <option value={Size.Peque}>Pequeño</option>
+                <option value={Size.Mediano}>Mediano</option>
+                <option value={Size.Grande}>Grande</option>
               </select>
             </div>
 

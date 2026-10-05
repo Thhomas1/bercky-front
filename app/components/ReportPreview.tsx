@@ -4,15 +4,18 @@ import Image from "next/image";
 import { MapPin, Clock, MessageCircle } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import type { Comment } from "@/types/comment";
+import { Status } from "@/types/enums"; // <-- Importamos el Enum
 import Map from "@/components/Map";
 import { useGetReport } from "@/hooks/useGetReport";
 import { useGetCommentsByReport } from "@/hooks/useGetCommentsByReport";
 import { EditReportButton } from "./EditReportButton";
 
-const statusStyles: Record<string, string> = {
-  perdido: "bg-red-500/10 text-red-600 dark:text-red-400",
-  encontrado: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  "en transito": "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+// Usamos Record<Status, string> y las claves del Enum
+const statusStyles: Record<Status, string> = {
+  [Status.Perdido]: "bg-red-500/10 text-red-600 dark:text-red-400",
+  [Status.Encontrado]:
+    "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  [Status.Transito]: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
 };
 
 const CommentRow = ({ comment }: { comment: Comment }) => {
@@ -73,6 +76,12 @@ export const ReportPreview = ({ id: reportId }: { id: number }) => {
   if (isError || !report)
     return <p className="p-10 text-red-400">Error al cargar el reporte.</p>;
 
+  const currentStatus = report.animal?.status
+    ? (report.animal.status as Status)
+    : report.istransit
+      ? Status.Transito
+      : Status.Perdido;
+
   return (
     <main className="mx-auto max-w-2xl px-0 py-0 pb-28 sm:px-6 sm:py-8">
       <div className="bg-muted relative aspect-square w-full sm:aspect-4/3 sm:overflow-hidden sm:rounded-2xl">
@@ -112,12 +121,11 @@ export const ReportPreview = ({ id: reportId }: { id: number }) => {
             </div>
           </div>
 
+          {/* Renderizado limpio usando nuestro Enum y diccionario */}
           <span
-            className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium capitalize ${statusStyles[report.animal?.status || "perdido"]}`}
+            className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium capitalize ${statusStyles[currentStatus]}`}
           >
-            {report.animal?.status || report.istransit
-              ? "en transito"
-              : "perdido"}
+            {currentStatus}
           </span>
         </div>
 
