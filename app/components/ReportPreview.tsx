@@ -9,14 +9,7 @@ import Map from "@/components/Map";
 import { useGetReport } from "@/hooks/useGetReport";
 import { useGetCommentsByReport } from "@/hooks/useGetCommentsByReport";
 import { EditReportButton } from "./EditReportButton";
-
-// Usamos Record<Status, string> y las claves del Enum
-const statusStyles: Record<Status, string> = {
-  [Status.Perdido]: "bg-red-500/10 text-red-600 dark:text-red-400",
-  [Status.Encontrado]:
-    "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  [Status.Transito]: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-};
+import { statusStyles } from "@/types/animal";
 
 const CommentRow = ({ comment }: { comment: Comment }) => {
   return (

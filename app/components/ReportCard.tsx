@@ -6,13 +6,7 @@ import { MapPin } from "lucide-react";
 import { motion } from "motion/react";
 import type { Report } from "@/types/report";
 import { Status } from "@/types/enums";
-
-const statusStyles: Record<Status, string> = {
-  [Status.Perdido]: "bg-red-500/10 text-red-600 dark:text-red-400",
-  [Status.Encontrado]:
-    "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  [Status.Transito]: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-};
+import { statusStyles } from "@/types/animal";
 
 export const ReportCard = ({ report }: { report: Report }) => {
   const animalName = `Mascota #${report.animal_id}`;

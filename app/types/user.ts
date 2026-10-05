@@ -12,7 +12,6 @@ export interface User {
   supabase_id?: string;
 }
 
-// Currently not being used if we only use SSO
 export interface RegisterDto {
   name: string;
   email: string;
@@ -22,4 +21,11 @@ export interface RegisterDto {
 export interface LoginDto {
   email: string;
   password: string;
+}
+
+export interface UpdateUser {
+  name?: string;
+  lastname?: string;
+  phonenumber?: string;
+  zone?: string;
 }
