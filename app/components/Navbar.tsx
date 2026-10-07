@@ -61,12 +61,12 @@ export const Navbar = () => {
               </button>
             ) : (
               <div className="flex items-center gap-3">
-                <Link href="auth/login">
+                <Link href="/auth/login">
                   <Button variant="ghost" className="text-muted-foreground">
                     Ingresar
                   </Button>
                 </Link>
-                <Link href="auth/register">
+                <Link href="/auth/register">
                   <Button>Registrarse</Button>
                 </Link>
               </div>

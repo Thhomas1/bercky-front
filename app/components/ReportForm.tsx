@@ -52,7 +52,7 @@ export default function ReportForm() {
 
       // reporte
       formData.append("status", data.status);
-      formData.append("istransit", String(data.status === Status.Transito)); // <-- Usamos el Enum
+      formData.append("istransit", String(data.status === Status.Transito));
       formData.append("zonereport", data.zonereport);
       formData.append("spotted", data.spotted);
       formData.append("description", data.description);
@@ -73,8 +73,9 @@ export default function ReportForm() {
       toast.success("¡Reporte creado con éxito!", {
         description: "Tu reporte ya está visible para toda la comunidad.",
       });
-
-      router.push("/");
+      // redireccionamos a profile para que termine de completar sus datos
+      //@TODO agregar un instructor avisando que termine justamente de completar sus datos
+      router.push(`/profile`);
     } catch (error) {
       console.error("Error al publicar el reporte:", error);
     }

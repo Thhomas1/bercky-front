@@ -12,6 +12,7 @@ import { EditReportButton } from "./EditReportButton";
 import { statusStyles } from "@/types/animal";
 import { useCreateComment } from "@/hooks/useCreateComment";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { ErrorReport } from "./errors/errorReport";
 
 type CommentFormValues = {
   content: string;
@@ -99,9 +100,11 @@ export const ReportPreview = ({ id: reportId }: { id: number }) => {
   };
 
   if (isLoading)
-    return <p className="text-muted-foreground p-10">Cargando...</p>;
-  if (isError || !report)
-    return <p className="p-10 text-red-400">Error al cargar el reporte.</p>;
+    return (
+      <p className="text-muted-foreground p-10 text-center">Cargando...</p>
+    );
+
+  if (isError || !report) return <ErrorReport />;
 
   const currentStatus = report.animal?.status
     ? (report.animal.status as Status)
