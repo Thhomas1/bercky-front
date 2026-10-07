@@ -17,6 +17,10 @@ import { useRouter } from "next/navigation";
 import { useCreateReport } from "@/hooks/useCreateReport";
 import { toast } from "sonner";
 import { Status, AnimalType, Size } from "@/types/enums";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supa";
+import { ErrorForm } from "./errors/errorForm";
+
 type ReportFormValues = {
   status: Status;
   zonereport: string;
@@ -33,6 +37,18 @@ type ReportFormValues = {
 export default function ReportForm() {
   const router = useRouter();
   const createReportMutation = useCreateReport();
+
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setUserId(session?.user?.id || null);
+    };
+    checkUser();
+  }, []);
 
   const {
     register,
@@ -83,6 +99,8 @@ export default function ReportForm() {
 
   const isSubmitting = createReportMutation.isPending;
 
+  if (!userId) return <ErrorForm />;
+
   return (
     <main className="flex justify-center px-4 py-12 pb-28 sm:px-6">
       <motion.div
@@ -106,7 +124,6 @@ export default function ReportForm() {
               ¿Cuál es la situación?
             </label>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {/* <-- Iteramos sobre los valores del Enum --> */}
               {[Status.Perdido, Status.Transito, Status.Encontrado].map(
                 (statusOption) => (
                   <label
