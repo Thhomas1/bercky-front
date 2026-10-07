@@ -16,8 +16,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useCreateReport } from "@/hooks/useCreateReport";
 import { toast } from "sonner";
-import { Status, AnimalType, Size } from "@/types/enums"; // <-- Importamos los Enums
-
+import { Status, AnimalType, Size } from "@/types/enums";
 type ReportFormValues = {
   status: Status;
   zonereport: string;

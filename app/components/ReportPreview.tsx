@@ -1,15 +1,21 @@
 "use client";
 
 import Image from "next/image";
-import { MapPin, Clock, MessageCircle } from "lucide-react";
+import { MapPin, Clock, MessageCircle, Send } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import type { Comment } from "@/types/comment";
-import { Status } from "@/types/enums"; // <-- Importamos el Enum
+import { Status } from "@/types/enums";
 import Map from "@/components/Map";
 import { useGetReport } from "@/hooks/useGetReport";
 import { useGetCommentsByReport } from "@/hooks/useGetCommentsByReport";
 import { EditReportButton } from "./EditReportButton";
 import { statusStyles } from "@/types/animal";
+import { useCreateComment } from "@/hooks/useCreateComment";
+import { useForm, SubmitHandler } from "react-hook-form";
+
+type CommentFormValues = {
+  content: string;
+};
 
 const CommentRow = ({ comment }: { comment: Comment }) => {
   return (
@@ -64,6 +70,34 @@ export const ReportPreview = ({ id: reportId }: { id: number }) => {
   const { data: comments, isLoading: isLoadingComments } =
     useGetCommentsByReport(reportId);
 
+  const { mutate: createComment, isPending: isSubmitting } =
+    useCreateComment(reportId);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+  } = useForm<CommentFormValues>({
+    defaultValues: {
+      content: "",
+    },
+    mode: "onChange",
+  });
+
+  const onSubmit: SubmitHandler<CommentFormValues> = (data) => {
+    if (!data.content.trim()) return;
+
+    createComment(
+      { content: data.content },
+      {
+        onSuccess: () => {
+          reset();
+        },
+      },
+    );
+  };
+
   if (isLoading)
     return <p className="text-muted-foreground p-10">Cargando...</p>;
   if (isError || !report)
@@ -114,7 +148,6 @@ export const ReportPreview = ({ id: reportId }: { id: number }) => {
             </div>
           </div>
 
-          {/* Renderizado limpio usando nuestro Enum y diccionario */}
           <span
             className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium capitalize ${statusStyles[currentStatus]}`}
           >
@@ -168,6 +201,35 @@ export const ReportPreview = ({ id: reportId }: { id: number }) => {
               Todavía no hay comentarios.
             </p>
           )}
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="mt-6 flex flex-col gap-3"
+          >
+            <textarea
+              {...register("content", { required: true })}
+              disabled={isSubmitting}
+              placeholder="¿Viste a este animal? Dejá tu comentario..."
+              className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring ring-offset-background flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            />
+            {errors.content && (
+              <span className="text-xs text-red-500">
+                El comentario no puede estar vacío.
+              </span>
+            )}
+            <button
+              type="submit"
+              disabled={isSubmitting || !isValid}
+              className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring inline-flex h-10 items-center justify-center self-end rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+            >
+              {isSubmitting ? (
+                "Enviando..."
+              ) : (
+                <>
+                  Enviar <Send className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </button>
+          </form>
         </div>
       </div>
     </main>
