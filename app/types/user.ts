@@ -9,7 +9,6 @@ export interface User {
   email: string;
   role?: Role;
   created_at: Date;
-  supabase_id?: string;
 }
 
 export interface RegisterDto {
