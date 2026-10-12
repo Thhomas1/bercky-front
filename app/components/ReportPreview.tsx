@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import { MapPin, Clock, MessageCircle, Send } from "lucide-react";
+import { MapPin, Clock, MessageCircle, Send, Pencil } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import type { Comment } from "@/types/comment";
 import { Status } from "@/types/enums";
@@ -11,6 +12,8 @@ import { useGetCommentsByReport } from "@/hooks/useGetCommentsByReport";
 import { EditReportButton } from "./EditReportButton";
 import { statusStyles } from "@/types/animal";
 import { useCreateComment } from "@/hooks/useCreateComment";
+import { useUpdateComment } from "@/hooks/useUpdateComment";
+import { useGetProfile } from "@/hooks/useGetProfile";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { ErrorReport } from "./errors/errorReport";
 
@@ -18,7 +21,39 @@ type CommentFormValues = {
   content: string;
 };
 
-const CommentRow = ({ comment }: { comment: Comment }) => {
+const CommentRow = ({
+  comment,
+  reportId,
+  isOwner,
+}: {
+  comment: Comment;
+  reportId: number;
+  isOwner: boolean;
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState(comment.content);
+  const { mutate: updateComment, isPending: isSaving } =
+    useUpdateComment(reportId);
+
+  const handleSave = () => {
+    const content = draft.trim();
+    if (!content || content === comment.content) {
+      setIsEditing(false);
+      return;
+    }
+    updateComment(
+      { id: comment.id, content },
+      {
+        onSuccess: () => setIsEditing(false),
+      },
+    );
+  };
+
+  const handleCancel = () => {
+    setDraft(comment.content);
+    setIsEditing(false);
+  };
+
   return (
     <div className="flex gap-3">
       <div className="bg-muted text-muted-foreground flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold">
@@ -32,8 +67,48 @@ const CommentRow = ({ comment }: { comment: Comment }) => {
           <span className="text-muted-foreground text-xs">
             {new Date(comment.createdat).toLocaleDateString("es-AR")}
           </span>
+          {isOwner && !isEditing && (
+            <button
+              type="button"
+              onClick={() => setIsEditing(true)}
+              aria-label="Editar comentario"
+              className="text-muted-foreground hover:text-foreground ml-auto"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
-        <p className="text-foreground/90 mt-0.5 text-sm">{comment.content}</p>
+        {isEditing ? (
+          <div className="mt-1 flex flex-col gap-2">
+            <textarea
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              disabled={isSaving}
+              maxLength={1000}
+              className="border-input bg-background focus-visible:ring-ring ring-offset-background min-h-[60px] w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:opacity-50"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={handleCancel}
+                disabled={isSaving}
+                className="text-muted-foreground hover:text-foreground text-xs"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={isSaving || !draft.trim()}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-3 py-1 text-xs font-medium disabled:opacity-50"
+              >
+                {isSaving ? "Guardando..." : "Guardar"}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-foreground/90 mt-0.5 text-sm">{comment.content}</p>
+        )}
         {comment.photo && (
           <div className="relative mt-2 h-32 w-32 overflow-hidden rounded-lg">
             <Image
@@ -70,6 +145,7 @@ export const ReportPreview = ({ id: reportId }: { id: number }) => {
   const { data: report, isLoading, isError } = useGetReport(reportId);
   const { data: comments, isLoading: isLoadingComments } =
     useGetCommentsByReport(reportId);
+  const { data: currentUser } = useGetProfile();
 
   const { mutate: createComment, isPending: isSubmitting } =
     useCreateComment(reportId);
@@ -196,7 +272,12 @@ export const ReportPreview = ({ id: reportId }: { id: number }) => {
           ) : comments && comments.length > 0 ? (
             <div className="flex flex-col gap-4">
               {comments.map((comment: Comment) => (
-                <CommentRow key={comment.id} comment={comment} />
+                <CommentRow
+                  key={comment.id}
+                  comment={comment}
+                  reportId={reportId}
+                  isOwner={currentUser?.id === comment.user.id}
+                />
               ))}
             </div>
           ) : (
