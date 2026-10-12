@@ -5,7 +5,10 @@ import { cookies } from "next/headers";
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/";
+  const nextParam = searchParams.get("next") ?? "/";
+  // solo rutas internas, para evitar redirecciones a otros sitios
+  const next =
+    nextParam.startsWith("/") && !nextParam.startsWith("//") ? nextParam : "/";
 
   if (code) {
     const cookieStore = await cookies();
@@ -37,5 +40,5 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) return NextResponse.redirect(`${origin}${next}`);
   }
-  return NextResponse.redirect(`${origin}/login?error=NoSePudoAutenticar`);
+  return NextResponse.redirect(`${origin}/auth/login?error=NoSePudoAutenticar`);
 }
