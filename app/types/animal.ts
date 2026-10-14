@@ -15,3 +15,9 @@ export const statusStyles: Record<Status, string> = {
     "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
   [Status.Transito]: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
 };
+
+export const statusLabels: Record<Status, string> = {
+  [Status.Perdido]: "Perdí mi mascota",
+  [Status.Transito]: "La tengo en tránsito",
+  [Status.Encontrado]: "Encontré una mascota",
+};

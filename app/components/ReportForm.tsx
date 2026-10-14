@@ -16,6 +16,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useCreateReport } from "@/hooks/useCreateReport";
 import { toast } from "sonner";
+import { statusLabels } from "@/types/animal";
 import { Status, AnimalType, Size } from "@/types/enums";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supa";
@@ -138,7 +139,7 @@ export default function ReportForm() {
                 (statusOption) => (
                   <label
                     key={statusOption}
-                    className="bg-background hover:bg-muted flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-zinc-200 px-4 py-3 text-sm font-medium capitalize transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-500/10 has-[:checked]:text-blue-600 dark:border-zinc-800 dark:has-[:checked]:text-blue-400"
+                    className="bg-background hover:bg-muted flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-zinc-200 px-4 py-3 text-sm font-medium transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-500/10 has-[:checked]:text-blue-600 dark:border-zinc-800 dark:has-[:checked]:text-blue-400"
                   >
                     <input
                       type="radio"
@@ -149,7 +150,7 @@ export default function ReportForm() {
                         required: "Seleccioná una opción",
                       })}
                     />
-                    {statusOption}
+                    {statusLabels[statusOption]}
                   </label>
                 ),
               )}

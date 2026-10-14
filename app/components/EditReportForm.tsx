@@ -16,10 +16,11 @@ import {
 import { useRouter } from "next/navigation";
 import { useUpdateReport } from "@/hooks/useUpdateReport";
 import { toast } from "sonner";
+import { statusLabels } from "@/types/animal";
 import { Status, AnimalType, Size } from "@/types/enums";
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import type { ReportLocation } from "@/types/report";
+import type { ReportDetail } from "@/types/report";
 
 // leaflet needs window, so it cannot render on the server
 const LocationPicker = dynamic(() => import("./LocationPicker"), { ssr: false });
@@ -41,12 +42,12 @@ type EditReportFormValues = {
 export default function EditReportForm({
   report,
 }: {
-  report: EditReportFormValues & { location?: ReportLocation | null };
+  report: ReportDetail;
 }) {
   const router = useRouter();
   const updateReportMutation = useUpdateReport(report.id);
   const initialLocation = report.location ?? null;
-  const [location, setLocation] = useState<ReportLocation | null>(
+  const [location, setLocation] = useState<ReportDetail["location"]>(
     initialLocation,
   );
 
@@ -56,15 +57,15 @@ export default function EditReportForm({
     formState: { errors, dirtyFields },
   } = useForm<EditReportFormValues>({
     defaultValues: {
-      status: report.status,
+      status: (report.animal?.status as Status) || Status.Perdido,
       zonereport: report.zonereport || "",
       spotted: report.spotted || "",
       description: report.description || "",
-      animal_name: report.animal_name || "",
-      animal_type: report.animal_type || AnimalType.Perro,
-      animal_breed: report.animal_breed || "",
-      animal_size: report.animal_size || Size.Mediano,
-      animal_age: report.animal_age || 1,
+      animal_name: report.animal?.name || "",
+      animal_type: (report.animal?.type as AnimalType) || AnimalType.Perro,
+      animal_breed: report.animal?.breed || "",
+      animal_size: (report.animal?.size as Size) || Size.Mediano,
+      animal_age: report.animal?.age || 1,
     },
   });
 
@@ -123,7 +124,7 @@ export default function EditReportForm({
               (statusOption) => (
                 <label
                   key={statusOption}
-                  className="bg-background hover:bg-muted flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-zinc-200 px-4 py-3 text-sm font-medium capitalize transition-all has-[:checked]:border-amber-500 has-[:checked]:bg-amber-500/10 has-[:checked]:text-amber-600 dark:border-zinc-800 dark:has-[:checked]:text-amber-400"
+                  className="bg-background hover:bg-muted flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-zinc-200 px-4 py-3 text-sm font-medium transition-all has-[:checked]:border-amber-500 has-[:checked]:bg-amber-500/10 has-[:checked]:text-amber-600 dark:border-zinc-800 dark:has-[:checked]:text-amber-400"
                 >
                   <input
                     type="radio"
@@ -133,7 +134,7 @@ export default function EditReportForm({
                       required: "Seleccioná una opción",
                     })}
                   />
-                  {statusOption}
+                  {statusLabels[statusOption]}
                 </label>
               ),
             )}

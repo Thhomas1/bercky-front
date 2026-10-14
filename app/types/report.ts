@@ -1,5 +1,6 @@
 import { Animal } from "./animal";
 import { User } from "./user";
+import { Status } from "./enums";
 
 export interface Report {
   id: number;
@@ -11,6 +12,7 @@ export interface Report {
   user_id: number;
   animal_id: number;
   createdat: string;
+  status?: Status | null;
 }
 
 export interface ReportLocation {

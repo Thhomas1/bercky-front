@@ -11,7 +11,8 @@ import { statusStyles } from "@/types/animal";
 export const ReportCard = ({ report }: { report: Report }) => {
   const animalName = `Mascota #${report.animal_id}`;
 
-  const status = report.istransit ? Status.Transito : Status.Perdido;
+  const status =
+    report.status ?? (report.istransit ? Status.Transito : Status.Perdido);
 
   const hasValidPhoto = report.photo && report.photo.startsWith("http");
 
