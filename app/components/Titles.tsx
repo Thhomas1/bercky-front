@@ -59,7 +59,7 @@ export const Titles = () => {
             className="group flex w-full items-center justify-center gap-2 rounded-xl bg-blue-500 px-6 py-3 text-sm font-semibold text-zinc-950 shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:scale-102 hover:bg-emerald-400 active:scale-98 sm:w-auto"
           >
             <span>📢</span>
-            <span>Registrar Pérdida</span>
+            <span>Registrar Reporte</span>
           </Link>
 
           <Link

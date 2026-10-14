@@ -14,7 +14,7 @@ export default function FAQ() {
     {
       question: "¿Cómo publico una mascota perdida?",
       answer:
-        "Hacé click en el botón de registrar pérdida, logeate con tu cuenta, subí una foto clara de tu animal, indicá la zona exacta de Bernal/Quilmes donde se perdió y dejá un teléfono de contacto.",
+        "Hacé click en el botón de registrar reporte, logeate con tu cuenta, subí una foto clara de tu animal, indicá la zona exacta de Bernal/Quilmes donde se perdió y dejá un teléfono de contacto.",
     },
     {
       question: "¿La aplicación tiene algún costo?",

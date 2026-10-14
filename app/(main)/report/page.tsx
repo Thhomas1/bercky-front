@@ -1,17 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { ReportCard } from "@/components/ReportCard";
 import { useGetReports } from "@/hooks/useGetReports";
 import { Report } from "@/types/report";
 import { Status } from "@/types/enums";
-
-const filters: { label: string; value: Status | null }[] = [
-  { label: "Todos", value: null },
-  { label: "Perdidos", value: Status.Perdido },
-  { label: "En tránsito", value: Status.Transito },
-  { label: "Encontrados", value: Status.Encontrado },
-];
+import { filters } from "@/lib/utils";
 
 export const ReportPage = () => {
   const { data: reports, isLoading, isError } = useGetReports();
@@ -27,7 +23,7 @@ export const ReportPage = () => {
     : reports;
 
   return (
-    <main className="px-4 py-6 pb-28 sm:px-6">
+    <main className="px-4 py-6 pb-48 sm:px-6">
       <div className="mx-auto mb-6 flex max-w-4xl flex-wrap gap-2">
         {filters.map(({ label, value }) => (
           <button
@@ -45,6 +41,14 @@ export const ReportPage = () => {
           </button>
         ))}
       </div>
+      <Link
+        href="/report/create"
+        aria-label="Registrar Reporte"
+        title="Registrar Reporte"
+        className="fixed right-4 bottom-28 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-500 text-zinc-950 shadow-lg transition-all duration-200 hover:scale-105 hover:bg-blue-400 active:scale-95 sm:right-8"
+      >
+        <Plus className="h-7 w-7" strokeWidth={2.5} />
+      </Link>
       <div className="mx-auto grid max-w-4xl grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
         {visibleReports?.map((report: Report) => (
           <ReportCard key={report.id} report={report} />
