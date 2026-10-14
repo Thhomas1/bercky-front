@@ -16,6 +16,8 @@ import { useUpdateComment } from "@/hooks/useUpdateComment";
 import { useGetProfile } from "@/hooks/useGetProfile";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { ErrorReport } from "./errors/errorReport";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type CommentFormValues = {
   content: string;
@@ -162,8 +164,19 @@ export const ReportPreview = ({ id: reportId }: { id: number }) => {
     mode: "onChange",
   });
 
+  const router = useRouter();
+
   const onSubmit: SubmitHandler<CommentFormValues> = (data) => {
     if (!data.content.trim()) return;
+    if (!currentUser) {
+      toast.error("Tenés que iniciar sesión para comentar", {
+        action: {
+          label: "Iniciar sesión",
+          onClick: () => router.push("/auth/login"),
+        },
+      });
+      return;
+    }
 
     createComment(
       { content: data.content },
