@@ -20,6 +20,11 @@ import { Status, AnimalType, Size } from "@/types/enums";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supa";
 import { ErrorForm } from "./errors/errorForm";
+import dynamic from "next/dynamic";
+import type { ReportLocation } from "@/types/report";
+
+// leaflet needs window, so it cannot render on the server
+const LocationPicker = dynamic(() => import("./LocationPicker"), { ssr: false });
 
 type ReportFormValues = {
   status: Status;
@@ -39,6 +44,7 @@ export default function ReportForm() {
   const createReportMutation = useCreateReport();
 
   const [userId, setUserId] = useState<string | null>(null);
+  const [location, setLocation] = useState<ReportLocation | null>(null);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -72,6 +78,10 @@ export default function ReportForm() {
       formData.append("zonereport", data.zonereport);
       formData.append("spotted", data.spotted);
       formData.append("description", data.description);
+      if (location) {
+        formData.append("lat", String(location.lat));
+        formData.append("lng", String(location.lng));
+      }
 
       // animal
       formData.append("animal_name", data.animal_name || "desconocido");
@@ -262,6 +272,13 @@ export default function ReportForm() {
                 <p className="text-xs text-red-500">{errors.spotted.message}</p>
               )}
             </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
+              <MapPin className="text-muted-foreground h-4 w-4" />
+              Marcá el punto en el mapa (Opcional)
+            </label>
+            <LocationPicker value={location} onChange={setLocation} />
           </div>
           <div className="space-y-2">
             <label className="text-foreground flex items-center gap-2 text-sm font-semibold">

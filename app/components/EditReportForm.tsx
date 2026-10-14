@@ -17,6 +17,12 @@ import { useRouter } from "next/navigation";
 import { useUpdateReport } from "@/hooks/useUpdateReport";
 import { toast } from "sonner";
 import { Status, AnimalType, Size } from "@/types/enums";
+import { useState } from "react";
+import dynamic from "next/dynamic";
+import type { ReportLocation } from "@/types/report";
+
+// leaflet needs window, so it cannot render on the server
+const LocationPicker = dynamic(() => import("./LocationPicker"), { ssr: false });
 
 type EditReportFormValues = {
   id: number;
@@ -35,10 +41,14 @@ type EditReportFormValues = {
 export default function EditReportForm({
   report,
 }: {
-  report: EditReportFormValues;
+  report: EditReportFormValues & { location?: ReportLocation | null };
 }) {
   const router = useRouter();
   const updateReportMutation = useUpdateReport(report.id);
+  const initialLocation = report.location ?? null;
+  const [location, setLocation] = useState<ReportLocation | null>(
+    initialLocation,
+  );
 
   const {
     register,
@@ -74,6 +84,11 @@ export default function EditReportForm({
             formData.append(key, String(value));
           }
         }
+      }
+
+      if (location && location !== initialLocation) {
+        formData.append("lat", String(location.lat));
+        formData.append("lng", String(location.lng));
       }
 
       if (data.photo && data.photo.length > 0) {
@@ -235,6 +250,14 @@ export default function EditReportForm({
               <p className="text-xs text-red-500">{errors.spotted.message}</p>
             )}
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
+            <MapPin className="text-muted-foreground h-4 w-4" />
+            Punto en el mapa
+          </label>
+          <LocationPicker value={location} onChange={setLocation} />
         </div>
 
         <div className="space-y-2">

@@ -252,7 +252,15 @@ export const ReportPreview = ({ id: reportId }: { id: number }) => {
           <h2 className="text-muted-foreground mb-2 text-sm font-semibold">
             Última ubicación reportada
           </h2>
-          <Map lat={0} lng={0} label={report.animal?.name || "Ubicación"} />
+          {report.location ? (
+            <Map
+              lat={report.location.lat}
+              lng={report.location.lng}
+              label={report.animal?.name || "Ubicación"}
+            />
+          ) : (
+            <p className="text-muted-foreground text-sm">Sin ubicación</p>
+          )}
         </div>
 
         <Separator className="my-6" />

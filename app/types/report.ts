@@ -13,6 +13,11 @@ export interface Report {
   createdat: string;
 }
 
+export interface ReportLocation {
+  lat: number;
+  lng: number;
+}
+
 export interface ReportDetail {
   id: number;
   zonereport: string;
@@ -23,4 +28,5 @@ export interface ReportDetail {
   createdat: string;
   user: User;
   animal: Animal;
+  location: ReportLocation | null;
 }
