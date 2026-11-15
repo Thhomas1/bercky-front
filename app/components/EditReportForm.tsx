@@ -21,6 +21,7 @@ import { Status, AnimalType, Size } from "@/types/enums";
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import type { ReportDetail } from "@/types/report";
+import { ACCEPTED_IMAGE_TYPES, validateImage } from "@/lib/utils";
 
 // leaflet needs window, so it cannot render on the server
 const LocationPicker = dynamic(() => import("./LocationPicker"), { ssr: false });
@@ -280,10 +281,13 @@ export default function EditReportForm({
           </label>
           <input
             type="file"
-            accept="image/*"
+            accept={ACCEPTED_IMAGE_TYPES}
             className="bg-background text-muted-foreground flex w-full cursor-pointer rounded-xl border border-zinc-200 px-3 py-2 text-sm file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-amber-500/10 file:px-4 file:py-1.5 file:text-sm file:font-semibold file:text-amber-600 hover:file:bg-amber-500/20 focus:ring-2 focus:ring-amber-500/50 focus:outline-none dark:border-zinc-800"
-            {...register("photo")}
+            {...register("photo", { validate: validateImage })}
           />
+          {errors.photo && (
+            <p className="text-xs text-red-500">{errors.photo.message}</p>
+          )}
         </div>
 
         <div className="flex gap-3 pt-4">

@@ -20,12 +20,15 @@ import { statusLabels } from "@/types/animal";
 import { Status, AnimalType, Size } from "@/types/enums";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supa";
+import { ACCEPTED_IMAGE_TYPES, validateImage } from "@/lib/utils";
 import { ErrorForm } from "./errors/errorForm";
 import dynamic from "next/dynamic";
 import type { ReportLocation } from "@/types/report";
 
 // leaflet needs window, so it cannot render on the server
-const LocationPicker = dynamic(() => import("./LocationPicker"), { ssr: false });
+const LocationPicker = dynamic(() => import("./LocationPicker"), {
+  ssr: false,
+});
 
 type ReportFormValues = {
   status: Status;
@@ -100,8 +103,6 @@ export default function ReportForm() {
       toast.success("¡Reporte creado con éxito!", {
         description: "Tu reporte ya está visible para toda la comunidad.",
       });
-      // redireccionamos a profile para que termine de completar sus datos
-      //@TODO agregar un instructor avisando que termine justamente de completar sus datos
       router.push(`/profile`);
     } catch (error) {
       console.error("Error al publicar el reporte:", error);
@@ -300,10 +301,13 @@ export default function ReportForm() {
             </label>
             <input
               type="file"
-              accept="image/*"
+              accept={ACCEPTED_IMAGE_TYPES}
               className="bg-background text-muted-foreground flex w-full cursor-pointer rounded-xl border border-zinc-200 px-3 py-2 text-sm file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-blue-500/10 file:px-4 file:py-1.5 file:text-sm file:font-semibold file:text-blue-600 hover:file:bg-blue-500/20 focus:ring-2 focus:ring-blue-500/50 focus:outline-none dark:border-zinc-800"
-              {...register("photo")}
+              {...register("photo", { validate: validateImage })}
             />
+            {errors.photo && (
+              <p className="text-xs text-red-500">{errors.photo.message}</p>
+            )}
           </div>
 
           <div className="pt-4">
